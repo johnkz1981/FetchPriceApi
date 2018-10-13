@@ -1,0 +1,115 @@
+<template>
+  <v-app>
+    <v-card-title>
+      В наличии
+      <v-spacer></v-spacer>
+      <v-text-field
+              append-icon="search"
+              label="Search"
+              single-line
+              hide-details
+              @keyup.enter="getData"
+              v-model="searchCode"
+      ></v-text-field>
+    </v-card-title>
+    <bitrix-table
+            :items="bitrixData"
+            :total="bitrixTotal"
+            :loading="bitrixLoading"
+    ></bitrix-table>
+    <v-spacer></v-spacer>
+    Под заказ
+    <api-summary-table
+            :items="apiData"
+            :total="apiTotal"
+            :loading="apiLoading"
+    ></api-summary-table>
+  </v-app>
+</template>
+
+<script>
+  'use strict';
+
+  import BitrixTable from './components/BitrixTable'
+  import ApiSummaryTable from './components/ApiSummaryTable'
+
+  export default {
+    data() {
+      return {
+        searchCode: null,
+        url: 'http://yugavtodetal.ru/api/get-api-query.php',
+        bitrixLoading: false,
+        apiLoading: false,
+        apiData: [],
+        bitrixData: [],
+        apiTotal: {},
+        bitrixTotal: {},
+      }
+    },
+    name: 'App',
+    components: {
+      BitrixTable,
+      ApiSummaryTable
+    },
+    methods: {
+      /**
+       * Запрашивает данные
+       */
+      async getData() {
+        this.bitrixData = [];
+        this.apiData = [];
+        this.apiTotal = {};
+        this.bitrixTotal = {};
+
+        if (this.searchCode === null || this.searchCode === '') {
+          return;
+        }
+
+        this.bitrixLoading = true;
+        let data = await this._response('yes');
+        this.bitrixTotal = data.pop();
+        this.bitrixData = data;
+        this.bitrixLoading = false;
+
+        this.apiLoading = true;
+        data = await this._response('no');
+        this.apiTotal = data.pop();
+        this.apiData = data;
+        this.apiLoading = false;
+      },
+
+      /**
+       * Передают данные getData
+       * @param bitrix
+       * @returns {Promise<AxiosResponse<any> | never | void>}
+       * @private
+       */
+      _response(bitrix = no, substLevel = 'OriginalOnly') {
+        return this.$axios({
+          method: "get",
+          url: this.url,
+          params: {
+            q: this.searchCode,
+            bitrix: bitrix,
+            group: 'yes',
+            substLevel: substLevel
+          },
+        }).then(result => {
+          console.log(result);
+          return result.data
+        })
+            .then(data => {
+              return data;
+            })
+            .catch(error => console.log(error));
+      },
+    },
+    created() {
+      const searchElement = document.querySelector('.v-input__append-inner');
+      /*searchElement.addEventListener('click', () => {
+        console.log(1)
+      })*/
+      console.log(searchElement)
+    }
+  }
+</script>
