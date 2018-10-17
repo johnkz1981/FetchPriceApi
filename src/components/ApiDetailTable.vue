@@ -1,24 +1,19 @@
 <template>
   <v-data-table
           :headers="headers"
-          :items="items"
+          :items="getDataDetail"
           hide-actions
           class="elevation-1"
           :loading="loading"
   >
     <template slot="items" slot-scope="props">
-      <tr
-              class="api-summary-table__row"
-              :data-manufacturer="props.item.manufacturer"
-              @click="rowClickSummaryTable">
-        <td class="">{{ props.item.manufacturer }}</td>
-        <td class="">{{ props.item.vendorСode }}</td>
-        <td>{{ props.item.name }}</td>
-        <td class="">{{ props.item.quantity }}</td>
-        <td class="">{{ props.item.prise }}</td>
-        <td class="">{{ props.item.DDPercent }}</td>
-        <td class="">{{ props.item.LotQuantity }}</td>
-      </tr>
+      <td class="">{{ props.item.manufacturer }}</td>
+      <td class="">{{ props.item.vendorСode }}</td>
+      <td>{{ props.item.name }}</td>
+      <td class="">{{ props.item.quantity }}</td>
+      <td class="">{{ props.item.prise }}</td>
+      <td class="">{{ props.item.DDPercent }}</td>
+      <td class="">{{ props.item.LotQuantity }}</td>
     </template>
     <template slot="footer">
       <td>
@@ -43,7 +38,7 @@
 
 <script>
   export default {
-    name: "ApiSummaryTable",
+    name: "ApiDetailTable",
     props: {
       items: Array,
       total: Object,
@@ -62,26 +57,14 @@
         ],
       }
     },
-    methods: {
-      rowClickSummaryTable() {
-        const manufacturer = event.target.parentElement.dataset.manufacturer;
-        this.$store.commit({
-          type: 'setManufacturer',
-          manufacturer: manufacturer
-        });
-        this.$store.dispatch('getDataDetail', {
-          url: 'http://yugavtodetal.ru/api/get-api-query.php',
-          searchCode: 'op595',
-          bitrix: 'no',
-          substLevel: 'OriginalOnly',
-          manufacturer: manufacturer
-        })
+    computed: {
+      getDataDetail() {
+        return this.$store.getters.dataDetail;
       },
     }
   }
 </script>
 
-<style lang="sass">
-  .api-summary-table__row
-    cursor: pointer
+<style scoped>
+
 </style>
