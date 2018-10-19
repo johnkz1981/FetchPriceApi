@@ -34,7 +34,7 @@
 
 <script>
   export default {
-    name: "ApiDetailTable",
+    name: "ApiOriginalTable",
     props: {
       priceGroup: String,
       items: Array,
@@ -51,41 +51,13 @@
           {text: 'Вероятность', value: 'DDPercent'},
           {text: 'Кратность', value: 'LotQuantity'},
         ],
-        getDataDetail: []
       }
     },
-    computed: {
-      /*getDataDetail() {
-        return this.$store.getters.dataDetail;
+    computed : {
+      getDataDetail() {
+        return this.$store.getters.dataOriginal;
       },
-      getDataDetailTotal() {
-        const total = {countApi: '', countGroupUnique: '', minDays: '', minPriseContractor: ''};
-        return !this.$store.getters.dataDetail ? total : Object.assign(total, this.$store.getters.dataDetail.pop());
-      },
-      getApiDetailLoading() {
-        return this.$store.getters.apiDetailLoading;
-      },*/
-      /*getDataDetail() {
-        const data = this.$store.getters.dataDetail;
-        return data[this.priceGroup];
-      },*/
     },
-    async created() {
-      await this.$store.dispatch('getDataDetail', {
-        url: 'http://yugavtodetal.ru/api/get-api-query.php',
-        bitrix: 'no',
-        substLevel: 'All',
-        //brandAndCode: dataRow.brandAndCode,
-        priceGroupName: this.priceGroup
-      });
-
-      const data = this.$store.getters.dataDetail;
-      this.getDataDetail = data[this.priceGroup];
-    },
-    beforeUpdate () {
-      const data = this.$store.getters.dataDetail;
-      this.getDataDetail = data[this.priceGroup];
-    }
   }
 </script>
 

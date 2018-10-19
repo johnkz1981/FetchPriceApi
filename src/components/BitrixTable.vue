@@ -1,10 +1,10 @@
 <template>
   <v-data-table
           :headers="headers"
-          :items="items"
+          :items="getDataBitrix"
           hide-actions
           class="elevation-1"
-          :loading="loading"
+          :loading="getLoadingBitrix"
   >
     <template slot="items" slot-scope="props">
       <td class="text-xs-right">{{ props.item.manufacturer }}</td>
@@ -16,11 +16,11 @@
     <template slot="footer">
       <td>
         <strong>Количество:</strong>
-        {{total.countBitix }}
+        {{ getDataBitrixTotal.countBitix }}
       </td>
       <td>
         <strong>В наличии минимальная цена:</strong>
-        {{total.minPriseOur}}
+        {{ getDataBitrixTotal.minPriseOur}}
       </td>
     </template>
   </v-data-table>
@@ -30,9 +30,9 @@
   export default {
     name: "BitrixTable",
     props: {
-      items: Array,
-      total: Object,
-      loading: Boolean
+      //items: Array,
+      //total: Object,
+      //loading: Boolean
     },
     data() {
       return {
@@ -45,6 +45,18 @@
         ],
       }
     },
+    computed: {
+      getLoadingBitrix() {
+        return this.$store.getters.bitrixLoading;
+      },
+      getDataBitrix() {
+        return this.$store.getters.dataBitrix;
+      },
+      getDataBitrixTotal() {
+        const total = {countBitix: '', minPriseOur: ''};
+        return !this.$store.getters.dataBitrix ? total : Object.assign(total, this.$store.getters.dataBitrix.pop());
+      }
+    }
   }
 </script>
 

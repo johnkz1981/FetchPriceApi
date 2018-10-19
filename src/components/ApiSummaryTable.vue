@@ -1,15 +1,16 @@
 <template>
   <v-data-table
           :headers="headers"
-          :items="items"
+          :items="getDataApi"
           hide-actions
           class="elevation-1"
-          :loading="loading"
+          :loading="getApiSummaryLoading"
   >
     <template slot="items" slot-scope="props">
       <tr
               class="api-summary-table__row"
-              :data-manufacturer="props.item.manufacturer"
+              :data-brand-and-code="props.item.brandAndCode"
+              :data-make-logo="props.item.MakeLogo"
               @click="rowClickSummaryTable">
         <td class="">{{ props.item.manufacturer }}</td>
         <td class="">{{ props.item.vendorСode }}</td>
@@ -23,19 +24,19 @@
     <template slot="footer">
       <td>
         <strong>Количество:</strong>
-        {{total.countApi }}
+        {{getDataApiTotal.countApi }}
       </td>
       <td>
         <strong>Количество уникальных брэндов:</strong>
-        {{total.countGroupUnique }}
+        {{getDataApiTotal.countGroupUnique }}
       </td>
       <td>
         <strong>Доставка:</strong>
-        {{total.minDays}}
+        {{getDataApiTotal.minDays}}
       </td>
       <td>
         <strong>Мнимальная цена поставщика:</strong>
-        {{total.minPriseContractor}}
+        {{getDataApiTotal.minPriseContractor}}
       </td>
     </template>
   </v-data-table>
@@ -44,11 +45,7 @@
 <script>
   export default {
     name: "ApiSummaryTable",
-    props: {
-      items: Array,
-      total: Object,
-      loading: Boolean
-    },
+    props: {},
     data() {
       return {
         headers: [
@@ -64,19 +61,29 @@
     },
     methods: {
       rowClickSummaryTable() {
-        const manufacturer = event.target.parentElement.dataset.manufacturer;
-        this.$store.commit({
-          type: 'setManufacturer',
-          manufacturer: manufacturer
-        });
-        this.$store.dispatch('getDataDetail', {
+        const dataRow = event.target.parentElement.dataset;
+
+        this.$store.dispatch('getPriceGroup', {
           url: 'http://yugavtodetal.ru/api/get-api-query.php',
-          searchCode: 'op595',
           bitrix: 'no',
-          substLevel: 'OriginalOnly',
-          manufacturer: manufacturer
+          substLevel: 'All',
+          makeLogo: dataRow.makeLogo,
+          //brandAndCode: dataRow.brandAndCode,
+          priceGroup: 'yes'
         })
       },
+    },
+    computed: {
+      getApiSummaryLoading() {
+        return this.$store.getters.apiSummaryLoading;
+      },
+      getDataApi() {
+        return this.$store.getters.dataApi;
+      },
+      getDataApiTotal() {
+        const total = {countApi: '', countGroupUnique: '', minDays: '', minPriseContractor: ''};
+        return !this.$store.getters.dataApi ? total : Object.assign(total, this.$store.getters.dataApi.pop());
+      }
     }
   }
 </script>
