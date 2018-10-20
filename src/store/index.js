@@ -4,6 +4,7 @@ import App from './App.js'
 import ApiSummaryTable from './ApiSummaryTable.js'
 import BitrixTable from './BitrixTable.js'
 import ApiDetailTable from './ApiDetailTable.js'
+import axios from './axios.js'
 
 Vue.use(Vuex);
 
@@ -12,6 +13,7 @@ export default new Vuex.Store({
     App,
     ApiSummaryTable,
     BitrixTable,
-    ApiDetailTable
+    ApiDetailTable,
+    axios
   }
 })

@@ -64,12 +64,7 @@
         const dataRow = event.target.parentElement.dataset;
 
         this.$store.dispatch('getPriceGroup', {
-          url: 'http://yugavtodetal.ru/api/get-api-query.php',
-          bitrix: 'no',
-          substLevel: 'All',
-          makeLogo: dataRow.makeLogo,
-          //brandAndCode: dataRow.brandAndCode,
-          priceGroup: 'yes'
+          dataRow: dataRow
         })
       },
     },

@@ -3,9 +3,8 @@ export default {
     manufacturer: '',
     apiSummaryLoading: false,
     apiPriceGroup: [],
-    makeLogo: '',
-    dataDetail: {},
-    dataOriginal: []
+    dataOriginal: [],
+    dataRow: {}
   },
   mutations: {
     setManufacturer(state, payload) {
@@ -17,11 +16,8 @@ export default {
     setApiPriceGroup(state, payload) {
       state.apiPriceGroup = payload;
     },
-    setMakeLogo(state, payload) {
-      state.makeLogo = payload;
-    },
-    setDataDetail(state, payload) {
-      Object.assign(state.dataDetail, payload);
+    setDataRow(state, payload) {
+      state.dataRow = payload;
     },
     setDataOriginal(state, payload) {
       state.dataOriginal = payload;
@@ -29,23 +25,22 @@ export default {
   },
   actions: {
     async getPriceGroup({dispatch, commit, state}, payload) {
-      payload.bitrix = 'no';
-      payload.group = 'no';
-      payload.priceGroup = 'no';
       payload.substLevel = 'OriginalOnly';
+      payload.makeLogo = payload.dataRow.makeLogo;
+      payload.brandAndCode = payload.dataRow.brandAndCode;
 
       commit('setApiPriceGroup', []);
       commit('setApiSummaryLoading', true);
-      commit('setMakeLogo', payload.makeLogo);
+      commit('setDataRow', payload.dataRow);
 
       await dispatch('setParam', payload).then(result => {
-            console.log(result.data);
             commit('setDataOriginal', result.data);
           }
       ).catch(error => console.log(error));
 
       payload.priceGroup = 'yes';
       payload.substLevel = 'All';
+      delete payload.brandAndCode;
 
       await dispatch('setParam', payload).then(result => {
             result.data.pop();
@@ -62,11 +57,8 @@ export default {
     apiPriceGroup: state => {
       return state.apiPriceGroup;
     },
-    makeLogo: state => {
-      return state.makeLogo;
-    },
-    dataDetail: state => {
-      return state.dataDetail;
+    dataRow: state => {
+      return state.dataRow;
     },
     dataOriginal: state => {
       return state.dataOriginal;

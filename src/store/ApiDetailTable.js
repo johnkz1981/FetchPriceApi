@@ -1,27 +1,29 @@
 export default {
   state: {
-
+    dataDetail: {},
   },
   mutations: {
-
+    setDataDetail(state, payload) {
+      Object.assign(state.dataDetail, payload);
+    },
   },
   actions: {
     async getDataDetail({dispatch, commit, state}, payload) {
-      payload.bitrix = 'no';
-      payload.group = 'no';
-      payload.makeLogo = this.getters.makeLogo;
+      payload.makeLogo = this.getters.dataRow.makeLogo;
+      payload.substLevel = 'All';
 
       await dispatch('setParam', payload).then(result => {
-        //`${payload.priceGroupName}` : result.data
-        const data ={}
-        data[payload.priceGroupName] =  result.data
+            const data = {};
+
+            data[payload.priceGroupName] = result.data;
             commit('setDataDetail', data);
-            console.log(result)
           }
       ).catch(error => console.log(error));
     },
   },
   getters: {
-
+    dataDetail: state => {
+      return state.dataDetail;
+    },
   }
 }

@@ -35,13 +35,6 @@
     data() {
       return {
         searchCode: null,
-        url: 'http://yugavtodetal.ru/api/get-api-query.php',
-        bitrixLoading: false,
-        apiLoading: false,
-        apiData: [],
-        bitrixData: [],
-        apiTotal: {},
-        bitrixTotal: {},
       }
     },
     name: 'App',
@@ -56,10 +49,7 @@
        */
       getData() {
         this.$store.dispatch('getData', {
-          url: this.url,
           searchCode: this.searchCode,
-          bitrix: 'yes',
-          substLevel: 'OriginalOnly'
         })
       },
     },
