@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-card-title>
-      В наличии
+
       <v-spacer></v-spacer>
       <v-text-field
               append-icon="search"
@@ -12,13 +12,19 @@
               v-model="searchCode"
       ></v-text-field>
     </v-card-title>
+    <v-toolbar-title class="mb-2 text-xs-center">В наличии</v-toolbar-title>
     <bitrix-table
+            class="mb-4"
     ></bitrix-table>
-    <v-spacer></v-spacer>
-    Под заказ
+    <v-toolbar-title
+            class="mb-4 text-xs-center"
+    >Под заказ</v-toolbar-title>
     <api-summary-table
+            class="mb-4"
     ></api-summary-table>
-    Группа таблиц
+    <v-toolbar-title
+            class="mb-4 text-xs-center"
+    >Детализация данных</v-toolbar-title>
     <api-group-table
     ></api-group-table>
   </v-app>

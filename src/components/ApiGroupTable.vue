@@ -1,15 +1,47 @@
-<template>
-  <v-app>
-    <v-toolbar-title>Original</v-toolbar-title>
-    <api-original-table
 
-    ></api-original-table>
-    <ul v-for="item in getApiPriceGroup">
-      <v-toolbar-title>{{ item.PriceGroup }}</v-toolbar-title>
+<template>
+
+  <v-app>
+    <div>
+      <v-tabs
+              v-model="active"
+              color="cyan"
+              dark
+              slider-color="yellow"
+      >
+        <v-tab
+                v-for="item in getApiPriceGroup"
+        >
+          {{ item }}
+        </v-tab>
+        <v-tab-item
+                v-for="item in getApiPriceGroup"
+
+        >
+          <!--v-card flat>
+            <v-toolbar-title>Original</v-toolbar-title>
+            <api-original-table/>
+          </v-card-->
+          <api-original-table
+                  v-if="item === 'Original'"
+          ></api-original-table>
+          <api-detail-table
+                  v-else
+                  :priceGroup="item"
+          ></api-detail-table>
+        </v-tab-item>
+      </v-tabs>
+
+      <!--div class="text-xs-center mt-3">
+        <v-btn @click="next">next tab</v-btn>
+      </div-->
+    </div>
+    <!--p v-for="item in getApiPriceGroup">
+      <v-toolbar-title>{{ item }}</v-toolbar-title>
       <api-detail-table
-              :priceGroup ="item.PriceGroup"
+              :priceGroup="item"
       ></api-detail-table>
-    </ul>
+    </p-->
   </v-app>
 </template>
 
@@ -21,7 +53,9 @@
 
   export default {
     data() {
-      return {}
+      return {
+        active: null,
+      }
     },
     name: "ApiGroupTable",
     components: {
@@ -29,10 +63,22 @@
       ApiOriginalTable
     },
     methods: {
+      next () {
+        const active = parseInt(this.active)
+        this.active = (active < 2 ? active + 1 : 0)
+      }
     },
     computed: {
       getApiPriceGroup() {
-        return this.$store.getters.apiPriceGroup;
+        const arrPriceGroup = ['Original'];
+
+        for (const item in this.$store.getters.apiPriceGroup) {
+          if(this.$store.getters.apiPriceGroup[item].PriceGroup === 'Original'){
+            continue
+;          }
+          arrPriceGroup.push(this.$store.getters.apiPriceGroup[item].PriceGroup)
+        }
+        return arrPriceGroup;
       },
     }
   }

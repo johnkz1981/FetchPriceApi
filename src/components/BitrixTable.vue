@@ -5,7 +5,21 @@
           hide-actions
           class="elevation-1"
           :loading="getLoadingBitrix"
+          :pagination.sync="pagination"
   >
+    <template slot="headers" slot-scope="props">
+      <tr>
+        <th
+                v-for="header in props.headers"
+                :key="header.text"
+                :class="['red', 'white--text' ,'column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
+                @click="changeSort(header.value)"
+        >
+          <v-icon small color="white">arrow_upward</v-icon>
+          {{ header.text }}
+        </th>
+      </tr>
+    </template>
     <template slot="items" slot-scope="props">
       <td class="text-xs-right">{{ props.item.manufacturer }}</td>
       <td class="text-xs-right">{{ props.item.vendorСode }}</td>
@@ -36,6 +50,10 @@
     },
     data() {
       return {
+        pagination: {
+          sortBy: 'manufacturer',
+          rowsPerPage: -1
+        },
         headers: [
           {text: 'Производитель', value: 'manufacturer'},
           {text: 'Артикул', value: 'vendorСode'},
@@ -43,6 +61,17 @@
           {text: 'Количество', value: 'quantity'},
           {text: 'Цена', value: 'prise'},
         ],
+      }
+    },
+    methods: {
+      changeSort(column) {
+        if (this.pagination.sortBy === column) {
+          this.pagination.descending = !this.pagination.descending;
+        } else {
+          this.pagination.sortBy = column;
+          this.pagination.descending = false;
+        }
+        //this.pagination.rowsPerPage = -1;
       }
     },
     computed: {

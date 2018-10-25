@@ -18,15 +18,15 @@
     <template slot="footer">
       <td>
         <strong>Количество:</strong>
-        {getDataDetailTotal.countApi }}
+        {{dataDetailTotal.countApi }}
       </td>
       <td>
         <strong>Доставка:</strong>
-        {getDataDetailTotal.minDays}}
+        {{dataDetailTotal.minDays}}
       </td>
       <td>
         <strong>Мнимальная цена поставщика:</strong>
-        {getDataDetailTotal.minPriseContractor}}
+        {{dataDetailTotal.minPriseContractor}}
       </td>
     </template>
   </v-data-table>
@@ -51,10 +51,14 @@
           {text: 'Вероятность', value: 'DDPercent'},
           {text: 'Кратность', value: 'LotQuantity'},
         ],
+        dataDetailTotal: {},
       }
     },
-    computed : {
+    computed: {
       getDataDetail() {
+        /*if (this.$store.getters.dataOriginal !== undefined && this.$store.getters.dataOriginal.length > 0) {
+          this.dataDetailTotal = this.$store.getters.dataOriginal.pop();
+        }*/
         return this.$store.getters.dataOriginal;
       },
     },

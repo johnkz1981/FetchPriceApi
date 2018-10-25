@@ -18,15 +18,15 @@
     <template slot="footer">
       <td>
         <strong>Количество:</strong>
-        {getDataDetailTotal.countApi }}
+        {{dataDetailTotal.countApi }}
       </td>
       <td>
         <strong>Доставка:</strong>
-        {getDataDetailTotal.minDays}}
+        {{dataDetailTotal.minDays}}
       </td>
       <td>
         <strong>Мнимальная цена поставщика:</strong>
-        {getDataDetailTotal.minPriseContractor}}
+        {{dataDetailTotal.minPriseContractor}}
       </td>
     </template>
   </v-data-table>
@@ -51,11 +51,11 @@
           {text: 'Вероятность', value: 'DDPercent'},
           {text: 'Кратность', value: 'LotQuantity'},
         ],
-        getDataDetail: []
+        getDataDetail: [],
+        dataDetailTotal: {}
       }
     },
-    computed: {
-    },
+    computed: {},
     async created() {
       await
           this.$store.dispatch('getDataDetail', {
@@ -64,6 +64,7 @@
 
       const data = this.$store.getters.dataDetail;
       this.getDataDetail = data[this.priceGroup];
+      this.dataDetailTotal = this.getDataDetail.pop();
     }
   }
 </script>
