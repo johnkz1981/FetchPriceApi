@@ -12,7 +12,18 @@
       <td>{{ props.item.name }}</td>
       <td class="">{{ props.item.quantity }}</td>
       <td class="">{{ props.item.prise }}</td>
-      <td class="">{{ props.item.DDPercent }}</td>
+      <td>
+        <v-progress-circular
+                class="mb-1 mt-1"
+                :rotate="360"
+                :size="50"
+                :width="5"
+                :value="+props.item.DDPercent"
+                :color="props.item.color"
+        >
+          {{ parseInt(+props.item.DDPercent) }}
+        </v-progress-circular>
+      </td>
       <td class="">{{ props.item.LotQuantity }}</td>
     </template>
     <template slot="footer">
@@ -56,9 +67,9 @@
     },
     computed: {
       getDataDetail() {
-        /*if (this.$store.getters.dataOriginal !== undefined && this.$store.getters.dataOriginal.length > 0) {
+        if (this.$store.getters.dataOriginal !== undefined && this.$store.getters.dataOriginal.length > 0) {
           this.dataDetailTotal = this.$store.getters.dataOriginal.pop();
-        }*/
+        }
         return this.$store.getters.dataOriginal;
       },
     },

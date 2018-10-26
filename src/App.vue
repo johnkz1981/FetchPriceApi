@@ -18,14 +18,18 @@
     ></bitrix-table>
     <v-toolbar-title
             class="mb-4 text-xs-center"
-    >Под заказ</v-toolbar-title>
+    >Под заказ
+    </v-toolbar-title>{{isSummary}}
     <api-summary-table
             class="mb-4"
     ></api-summary-table>
     <v-toolbar-title
             class="mb-4 text-xs-center"
-    >Детализация данных</v-toolbar-title>
+            v-show="isDetail"
+    >Детализация данных
+    </v-toolbar-title>
     <api-group-table
+            v-show="isDetail"
     ></api-group-table>
   </v-app>
 </template>
@@ -67,7 +71,17 @@
       console.log(searchElement)
     },
     computed: {
-
+      isDetail() {
+        if (this.$store.getters.dataOriginal === undefined || this.$store.getters.dataOriginal.length === 0) {
+          return false;
+        }
+        return true;
+      },
+      isSummary(){
+        if (this.$store.getters.dataApi !== undefined){
+          console.log( this.$store.getters.dataApi.length);
+        }
+      }
     }
   }
 </script>

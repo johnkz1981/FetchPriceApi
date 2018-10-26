@@ -7,6 +7,7 @@
           :loading="getLoadingBitrix"
           :pagination.sync="pagination"
   >
+    <v-progress-linear slot="progress" color="error" indeterminate></v-progress-linear>
     <template slot="headers" slot-scope="props">
       <tr>
         <th
@@ -27,7 +28,12 @@
       <td class="text-xs-right">{{ props.item.quantity }}</td>
       <td class="text-xs-right">{{ props.item.prise }}</td>
     </template>
-    <template slot="footer">
+    <template slot="no-data">
+      <v-alert :value="true" color="error" icon="warning">
+        В наличии нет :(
+      </v-alert>
+    </template>
+    <template slot="footer" color="red">
       <td>
         <strong>Количество:</strong>
         {{ getDataBitrixTotal.countBitix }}

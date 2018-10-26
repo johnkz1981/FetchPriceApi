@@ -5,7 +5,22 @@
           hide-actions
           class="elevation-1"
           :loading="getApiSummaryLoading"
+          :pagination.sync="pagination"
   >
+    <v-progress-linear slot="progress" indeterminate></v-progress-linear>
+    <template slot="headers" slot-scope="props">
+      <tr>
+        <th
+                v-for="header in props.headers"
+                :key="header.text"
+                :class="['primary', 'white--text' ,'column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
+                @click="changeSort(header.value)"
+        >
+          <v-icon small color="white">arrow_upward</v-icon>
+          {{ header.text }}
+        </th>
+      </tr>
+    </template>
     <template slot="items" slot-scope="props">
       <tr
               class="api-summary-table__row"
@@ -15,29 +30,29 @@
         <td class="">{{ props.item.manufacturer }}</td>
         <td class="">{{ props.item.vendorСode }}</td>
         <td>{{ props.item.name }}</td>
-        <td class="">{{ props.item.quantity }}</td>
         <td class="">{{ props.item.prise }}</td>
-        <td class="">{{ props.item.DDPercent }}</td>
-        <td class="">{{ props.item.LotQuantity }}</td>
+        <td class="">{{ props.item.deliveryTime }}</td>
       </tr>
     </template>
     <template slot="footer">
-      <td>
-        <strong>Количество:</strong>
-        {{getDataApiTotal.countApi }}
-      </td>
-      <td>
-        <strong>Количество уникальных брэндов:</strong>
-        {{getDataApiTotal.countGroupUnique }}
-      </td>
-      <td>
-        <strong>Доставка:</strong>
-        {{getDataApiTotal.minDays}}
-      </td>
-      <td>
-        <strong>Мнимальная цена поставщика:</strong>
-        {{getDataApiTotal.minPriseContractor}}
-      </td>
+      <div v-show="false">
+        <td>
+          <strong>Количество:</strong>
+          {{getDataApiTotal.countApi }}
+        </td>
+        <td>
+          <strong>Количество уникальных брэндов:</strong>
+          {{getDataApiTotal.countGroupUnique }}
+        </td>
+        <td>
+          <strong>Доставка:</strong>
+          {{getDataApiTotal.minDays}}
+        </td>
+        <td>
+          <strong>Мнимальная цена поставщика:</strong>
+          {{getDataApiTotal.minPriseContractor}}
+        </td>
+      </div>
     </template>
   </v-data-table>
 </template>
@@ -52,11 +67,13 @@
           {text: 'Производитель', value: 'manufacturer'},
           {text: 'Артикул', value: 'vendorСode'},
           {text: 'Наименование', value: 'name'},
-          {text: 'Количество', value: 'quantity'},
-          {text: 'Цена', value: 'prise'},
-          {text: 'Вероятность', value: 'DDPercent'},
-          {text: 'Кратность', value: 'LotQuantity'},
+          {text: 'Минимальная цена', value: 'prise'},
+          {text: 'Доставка', value: 'deliveryTime'},
         ],
+        pagination: {
+          sortBy: 'manufacturer',
+          rowsPerPage: -1
+        },
       }
     },
     methods: {
@@ -67,6 +84,15 @@
           dataRow: dataRow
         })
       },
+      changeSort(column) {
+        if (this.pagination.sortBy === column) {
+          this.pagination.descending = !this.pagination.descending;
+        } else {
+          this.pagination.sortBy = column;
+          this.pagination.descending = false;
+        }
+        //this.pagination.rowsPerPage = -1;
+      }
     },
     computed: {
       getApiSummaryLoading() {
