@@ -69,6 +69,11 @@
       getDataDetail() {
         if (this.$store.getters.dataOriginal !== undefined && this.$store.getters.dataOriginal.length > 0) {
           this.dataDetailTotal = this.$store.getters.dataOriginal.pop();
+          window.scrollTo({
+            'behavior': 'smooth',
+            'left': 0,
+            'top': document.getElementById('detail').offsetTop
+          });
         }
         return this.$store.getters.dataOriginal;
       },

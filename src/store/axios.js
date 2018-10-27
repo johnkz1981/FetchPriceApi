@@ -20,7 +20,8 @@ export default {
         makeLogo: payload.makeLogo,
         brandAndCode: payload.brandAndCode,
         priceGroup: payload.priceGroup,
-        priceGroupName: payload.priceGroupName
+        priceGroupName: payload.priceGroupName,
+        sortField: payload.sortField
       };
 
       return axios({

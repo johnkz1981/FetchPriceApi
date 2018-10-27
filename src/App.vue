@@ -23,7 +23,7 @@
     <api-summary-table
             class="mb-4"
     ></api-summary-table>
-    <v-toolbar-title
+    <v-toolbar-title  id="detail"
             class="mb-4 text-xs-center"
             v-show="isDetail"
     >Детализация данных

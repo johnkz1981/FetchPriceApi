@@ -5,6 +5,7 @@
           hide-actions
           class="elevation-1"
           :loading="loading"
+          :pagination.sync="pagination"
   >
     <template slot="items" slot-scope="props">
       <td class="">{{ props.item.manufacturer }}</td>
@@ -50,7 +51,6 @@
     props: {
       priceGroup: String,
       items: Array,
-      loading: String,
     },
     data() {
       return {
@@ -64,11 +64,28 @@
           {text: 'Кратность', value: 'LotQuantity'},
         ],
         getDataDetail: [],
-        dataDetailTotal: {}
+        dataDetailTotal: {},
+        pagination: {},
+        loading: false,
       }
     },
-    computed: {
+    watch: {
+      pagination() {
+        this.getDataFromApi()
+      }
     },
+    methods: {
+      async getDataFromApi() {
+        this.loading = true;
+        if (this.pagination)
+          await this.$store.dispatch('getDataDetail', {
+            priceGroupName: this.priceGroup,
+            sortField: [this.pagination.sortBy, this.pagination.descending],
+          });
+        this.loading = false;
+      }
+    },
+    computed: {},
     async created() {
       await
           this.$store.dispatch('getDataDetail', {
