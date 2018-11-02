@@ -12,7 +12,7 @@
       <td class="">{{ props.item.vendorСode }}</td>
       <td>{{ props.item.name }}</td>
       <td class="">{{ props.item.quantity }}</td>
-      <td class="">{{ props.item.prise }}</td>
+      <td class="">{{ props.item.price }}</td>
       <!--td class="">{{ props.item.DDPercent }}</td-->
       <td>
         <v-progress-circular
@@ -39,7 +39,7 @@
       </td>
       <td>
         <strong>Мнимальная цена поставщика:</strong>
-        {{dataDetailTotal.minPriseContractor}}
+        {{dataDetailTotal.minPriceContractor}}
       </td>
     </template>
   </v-data-table>
@@ -59,13 +59,15 @@
           {text: 'Артикул', value: 'vendorСode'},
           {text: 'Наименование', value: 'name'},
           {text: 'Количество', value: 'quantity'},
-          {text: 'Цена', value: 'prise'},
+          {text: 'Цена', value: 'price'},
           {text: 'Вероятность', value: 'DDPercent'},
           {text: 'Кратность', value: 'LotQuantity'},
         ],
         getDataDetail: [],
         dataDetailTotal: {},
-        pagination: {},
+        pagination: {
+          rowsPerPage: -1,
+        },
         loading: false,
       }
     },
@@ -82,6 +84,9 @@
             priceGroupName: this.priceGroup,
             sortField: [this.pagination.sortBy, this.pagination.descending],
           });
+        const data = this.$store.getters.dataDetail[this.priceGroup];
+        this.getDataDetail = data.item;
+        this.dataDetailTotal = data.total;
         this.loading = false;
       }
     },
@@ -92,9 +97,9 @@
             priceGroupName: this.priceGroup
           });
 
-      const data = this.$store.getters.dataDetail;
-      this.getDataDetail = data[this.priceGroup];
-      this.dataDetailTotal = this.getDataDetail.pop();
+      const data = this.$store.getters.dataDetail[this.priceGroup];
+      this.getDataDetail = data.item;
+      this.dataDetailTotal = data.total;
     }
   }
 </script>

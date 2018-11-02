@@ -79,7 +79,7 @@
       },
       isSummary(){
         if (this.$store.getters.dataApi !== undefined){
-          console.log( this.$store.getters.dataApi.length);
+          //console.log( this.$store.getters.dataApi.length);
         }
       }
     }

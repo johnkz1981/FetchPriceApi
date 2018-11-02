@@ -43,8 +43,7 @@ export default {
       delete payload.brandAndCode;
 
       await dispatch('setParam', payload).then(result => {
-            result.data.pop();
-            commit('setApiPriceGroup', result.data);
+            commit('setApiPriceGroup', result.data.item);
             commit('setApiSummaryLoading', false);
           }
       ).catch(error => console.log(error));

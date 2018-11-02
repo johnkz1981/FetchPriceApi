@@ -26,7 +26,7 @@
       <td class="text-xs-right">{{ props.item.vendorСode }}</td>
       <td>{{ props.item.name }}</td>
       <td class="text-xs-right">{{ props.item.quantity }}</td>
-      <td class="text-xs-right">{{ props.item.prise }}</td>
+      <td class="text-xs-right">{{ props.item.price }}</td>
     </template>
     <template slot="no-data">
       <v-alert :value="true" color="error" icon="warning">
@@ -40,7 +40,7 @@
       </td>
       <td>
         <strong>В наличии минимальная цена:</strong>
-        {{ getDataBitrixTotal.minPriseOur}}
+        {{ getDataBitrixTotal.minPriceOur}}
       </td>
     </template>
   </v-data-table>
@@ -65,7 +65,7 @@
           {text: 'Артикул', value: 'vendorСode'},
           {text: 'Наименование', value: 'name'},
           {text: 'Количество', value: 'quantity'},
-          {text: 'Цена', value: 'prise'},
+          {text: 'Цена', value: 'price'},
         ],
       }
     },
@@ -85,11 +85,16 @@
         return this.$store.getters.bitrixLoading;
       },
       getDataBitrix() {
-        return this.$store.getters.dataBitrix;
+        if (this.$store.getters.dataBitrix === undefined) {
+          return undefined;
+        }
+        return this.$store.getters.dataBitrix.item;
       },
       getDataBitrixTotal() {
-        const total = {countBitix: '', minPriseOur: ''};
-        return !this.$store.getters.dataBitrix ? total : Object.assign(total, this.$store.getters.dataBitrix.pop());
+        if (this.$store.getters.dataBitrix === undefined) {
+          return {minPriceOur: '', countBitix: ''};
+        }
+        return Object.assign({minPriceOur: '', countBitix: ''}, this.$store.getters.dataBitrix.total);
       }
     }
   }

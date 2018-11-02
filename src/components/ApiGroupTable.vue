@@ -1,4 +1,3 @@
-
 <template>
 
   <v-app>
@@ -12,7 +11,7 @@
         <v-tab
                 v-for="item in getApiPriceGroup"
         >
-          {{ item }}
+          {{ enRuPriceGroup[item] }}
         </v-tab>
         <v-tab-item
                 v-for="item in getApiPriceGroup"
@@ -55,6 +54,14 @@
     data() {
       return {
         active: null,
+        enRuPriceGroup: {
+          Original: "Оригинал",
+          ReplacementOriginal: "Замены",
+          ReplacementNonOriginal: "Аналоги",
+          DetailParts: "Части искомой детали",
+          PartOfDetail: "Узел (аггрегат), частью которого являются искомые детали",
+          NewNumber: "Новые номера",
+        },
       }
     },
     name: "ApiGroupTable",
@@ -63,7 +70,7 @@
       ApiOriginalTable
     },
     methods: {
-      next () {
+      next() {
         const active = parseInt(this.active)
         this.active = (active < 2 ? active + 1 : 0)
       }
@@ -73,11 +80,12 @@
         const arrPriceGroup = ['Original'];
 
         for (const item in this.$store.getters.apiPriceGroup) {
-          if(this.$store.getters.apiPriceGroup[item].PriceGroup === 'Original'){
-            continue
-;          }
+          if (this.$store.getters.apiPriceGroup[item].PriceGroup === 'Original') {
+            continue;
+          }
           arrPriceGroup.push(this.$store.getters.apiPriceGroup[item].PriceGroup)
         }
+        this.active = 0;
         return arrPriceGroup;
       },
     }

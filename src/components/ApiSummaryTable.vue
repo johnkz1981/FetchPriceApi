@@ -30,7 +30,8 @@
         <td class="">{{ props.item.manufacturer }}</td>
         <td class="">{{ props.item.vendorСode }}</td>
         <td>{{ props.item.name }}</td>
-        <td class="">{{ props.item.prise }}</td>
+        <td class="">{{ props.item.price }}</td>
+        <td class="">{{ props.item.priceOriginal }}</td>
         <td class="">{{ props.item.deliveryTime }}</td>
       </tr>
     </template>
@@ -38,19 +39,15 @@
       <div v-show="false">
         <td>
           <strong>Количество:</strong>
-          {{getDataApiTotal.countApi }}
         </td>
         <td>
           <strong>Количество уникальных брэндов:</strong>
-          {{getDataApiTotal.countGroupUnique }}
         </td>
         <td>
           <strong>Доставка:</strong>
-          {{getDataApiTotal.minDays}}
         </td>
         <td>
           <strong>Мнимальная цена поставщика:</strong>
-          {{getDataApiTotal.minPriseContractor}}
         </td>
       </div>
     </template>
@@ -67,7 +64,8 @@
           {text: 'Производитель', value: 'manufacturer'},
           {text: 'Артикул', value: 'vendorСode'},
           {text: 'Наименование', value: 'name'},
-          {text: 'Минимальная цена', value: 'prise'},
+          {text: 'Минимальная цена', value: 'price'},
+          {text: 'Исходная цена', value: 'priceOriginal'},
           {text: 'Доставка', value: 'deliveryTime'},
         ],
         pagination: {
@@ -99,11 +97,16 @@
         return this.$store.getters.apiSummaryLoading;
       },
       getDataApi() {
-        return this.$store.getters.dataApi;
+        if (this.$store.getters.dataApi === undefined) {
+          return undefined;
+        }
+        return this.$store.getters.dataApi.item;
       },
-      getDataApiTotal() {
-        const total = {countApi: '', countGroupUnique: '', minDays: '', minPriseContractor: ''};
-        return !this.$store.getters.dataApi ? total : Object.assign(total, this.$store.getters.dataApi.pop());
+      isAdmin(){
+        if (this.$store.getters.dataApi === undefined) {
+          return undefined;
+        }
+        return this.$store.getters.dataApi.total.isAdmin;
       }
     }
   }

@@ -11,7 +11,7 @@
       <td class="">{{ props.item.vendorСode }}</td>
       <td>{{ props.item.name }}</td>
       <td class="">{{ props.item.quantity }}</td>
-      <td class="">{{ props.item.prise }}</td>
+      <td class="">{{ props.item.price }}</td>
       <td>
         <v-progress-circular
                 class="mb-1 mt-1"
@@ -21,7 +21,7 @@
                 :value="+props.item.DDPercent"
                 :color="props.item.color"
         >
-          {{ parseInt(+props.item.DDPercent) }}
+          {{ isNaN(+props.item.DDPercent) ? "?" : parseInt(+props.item.DDPercent) }}
         </v-progress-circular>
       </td>
       <td class="">{{ props.item.LotQuantity }}</td>
@@ -58,7 +58,7 @@
           {text: 'Артикул', value: 'vendorСode'},
           {text: 'Наименование', value: 'name'},
           {text: 'Количество', value: 'quantity'},
-          {text: 'Цена', value: 'prise'},
+          {text: 'Цена', value: 'price'},
           {text: 'Вероятность', value: 'DDPercent'},
           {text: 'Кратность', value: 'LotQuantity'},
         ],
@@ -67,15 +67,17 @@
     },
     computed: {
       getDataDetail() {
-        if (this.$store.getters.dataOriginal !== undefined && this.$store.getters.dataOriginal.length > 0) {
-          this.dataDetailTotal = this.$store.getters.dataOriginal.pop();
+        if (this.$store.getters.dataOriginal !== undefined &&
+            this.$store.getters.dataOriginal.item !== undefined &&
+            this.$store.getters.dataOriginal.item.length > 0) {
+          this.dataDetailTotal = this.$store.getters.dataOriginal.total;
           window.scrollTo({
             'behavior': 'smooth',
             'left': 0,
             'top': document.getElementById('detail').offsetTop
           });
         }
-        return this.$store.getters.dataOriginal;
+        return this.$store.getters.dataOriginal.item;
       },
     },
   }
