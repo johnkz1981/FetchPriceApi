@@ -19,13 +19,14 @@
     <v-toolbar-title
             class="mb-4 text-xs-center"
     >Под заказ
-    </v-toolbar-title>{{isSummary}}
+    </v-toolbar-title>
+    {{isSummary}}
     <api-summary-table
             class="mb-4"
     ></api-summary-table>
-    <v-toolbar-title  id="detail"
-            class="mb-4 text-xs-center"
-            v-show="isDetail"
+    <v-toolbar-title id="detail"
+                     class="mb-4 text-xs-center"
+                     v-show="isDetail"
     >Детализация данных
     </v-toolbar-title>
     <api-group-table
@@ -65,10 +66,6 @@
     },
     created() {
       const searchElement = document.querySelector('.v-input__append-inner');
-      /*searchElement.addEventListener('click', () => {
-        console.log(1)
-      })*/
-      console.log(searchElement)
     },
     computed: {
       isDetail() {
@@ -77,8 +74,8 @@
         }
         return true;
       },
-      isSummary(){
-        if (this.$store.getters.dataApi !== undefined){
+      isSummary() {
+        if (this.$store.getters.dataApi !== undefined) {
           //console.log( this.$store.getters.dataApi.length);
         }
       }

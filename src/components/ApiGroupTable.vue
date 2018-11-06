@@ -7,6 +7,7 @@
               color="primary"
               dark
               slider-color="yellow"
+              class="tabs-table"
       >
         <v-tab
                 v-for="item in getApiPriceGroup"
@@ -92,6 +93,5 @@
   }
 </script>
 
-<style scoped>
-
+<style lang="sass">
 </style>

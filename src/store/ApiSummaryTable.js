@@ -4,7 +4,9 @@ export default {
     apiSummaryLoading: false,
     apiPriceGroup: [],
     dataOriginal: [],
-    dataRow: {}
+    dataRow: {},
+    querySummaryTable: null,
+    originalLoadingTable: false,
   },
   mutations: {
     setManufacturer(state, payload) {
@@ -22,6 +24,12 @@ export default {
     setDataOriginal(state, payload) {
       state.dataOriginal = payload;
     },
+    setQuerySummaryTable(state, payload) {
+      state.querySummaryTable = payload;
+    },
+    setOriginalLoadingTable(state, payload) {
+      state.originalLoadingTable = payload;
+    },
   },
   actions: {
     async getPriceGroup({dispatch, commit, state}, payload) {
@@ -32,6 +40,12 @@ export default {
       commit('setApiPriceGroup', []);
       commit('setApiSummaryLoading', true);
       commit('setDataRow', payload.dataRow);
+      const objSummary = {
+        brandAndCode: payload.dataRow.brandAndCode,
+        makeLogo: payload.makeLogo,
+        substLevel: payload.substLevel
+      };
+      commit('setQuerySummaryTable', objSummary);
 
       await dispatch('setParam', payload).then(result => {
             commit('setDataOriginal', result.data);
@@ -48,8 +62,20 @@ export default {
           }
       ).catch(error => console.log(error));
     },
+    getOriginal({dispatch, commit, state}, payload) {
+      state.querySummaryTable.limit = payload.limit;
+      commit('setOriginalLoadingTable', true);
+      dispatch('setParam', state.querySummaryTable).then(result => {
+            commit('setDataOriginal', result.data);
+            commit('setOriginalLoadingTable', false);
+          }
+      ).catch(error => console.log(error));
+    }
   },
   getters: {
+    originalLoadingTable: state => {
+      return state.originalLoadingTable;
+    },
     apiSummaryLoading: state => {
       return state.apiSummaryLoading;
     },

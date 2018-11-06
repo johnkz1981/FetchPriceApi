@@ -2,7 +2,7 @@ import axios from "axios";
 
 export default {
   state: {
-    searchCode: ''
+    searchCode: '',
   },
   mutations:{
     setSearchCode(state, payload) {
@@ -21,7 +21,8 @@ export default {
         brandAndCode: payload.brandAndCode,
         priceGroup: payload.priceGroup,
         priceGroupName: payload.priceGroupName,
-        sortField: payload.sortField
+        sortField: payload.sortField,
+        limit: payload.limit
       };
 
       return axios({
