@@ -17,13 +17,13 @@
         <v-tab-item
                 v-for="item in getApiPriceGroup"
         >
-          <api-original-table
+          <!--api-original-table
                   v-if="item === 'Original'"
-          ></api-original-table>
-          <api-detail-table
-                  v-else
+          ></api-original-table-->
+          <api-general-table
+
                   :priceGroup="item"
-          ></api-detail-table>
+          ></api-general-table>
         </v-tab-item>
       </v-tabs>
     </div>
@@ -35,6 +35,7 @@
 
   import ApiDetailTable from './ApiDetailTable'
   import ApiOriginalTable from './ApiOriginalTable'
+  import ApiGeneralTable from './ApiGeneralTable'
 
   export default {
     data() {
@@ -52,14 +53,15 @@
     },
     name: "ApiGroupTable",
     components: {
-      ApiDetailTable,
-      ApiOriginalTable
+      // ApiDetailTable,
+      // ApiOriginalTable,
+      ApiGeneralTable
     },
     methods: {
-      next() {
+      /*next() {
         const active = parseInt(this.active);
         this.active = (active < 2 ? active + 1 : 0);
-      }
+      }*/
     },
     computed: {
       getApiPriceGroup() {

@@ -40,6 +40,7 @@ export default {
     },
   },
   actions: {
+    // TODO Сделать слияние ApiDetail + ApiOriginal
     async getPriceGroup({dispatch, commit, state}, payload) {
       payload.substLevel = 'OriginalOnly';
       payload.makeLogo = payload.dataRow.makeLogo;
