@@ -17,6 +17,8 @@ export default {
       const data = {bitrix: [], api: []};
       payload.bitrix = 'yes';
 
+      commit('setBottomPage', false);
+      commit('setLimit', 0);
       commit('setDataOriginal', []);
       commit('setApiPriceGroup', []);
       commit('setData', data);

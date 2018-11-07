@@ -83,7 +83,6 @@
         ],
         dataDetailTotal: {},
         isBottomPage: false,
-        limit: 30,
         isLazyQuery: false
       }
     },
@@ -96,11 +95,11 @@
         });
       },
       getIsLazyQuery() {
-        console.log('limit',this.limit)
         return document.documentElement.scrollHeight ===
             document.documentElement.scrollTop +
             document.documentElement.clientHeight &&
-            this.dataDetailTotal.countApi > this.limit;
+            this.dataDetailTotal.countApi > this.getLimit &&
+            this.getLimit !== 0;
       }
     },
     computed: {
@@ -109,7 +108,7 @@
             this.$store.getters.dataOriginal.item !== undefined &&
             this.$store.getters.dataOriginal.item.length > 0) {
           this.dataDetailTotal = this.$store.getters.dataOriginal.total;
-          if (!this.isBottomPage) {
+          if (!this.getBottomPage) {
             window.scrollTo({
               'behavior': 'smooth',
               'left': 0,
@@ -122,17 +121,21 @@
       getOriginalLoadingTable() {
         return this.$store.getters.originalLoadingTable;
       },
+      getLimit() {
+        return this.$store.getters.limit;
+      },
+      getBottomPage() {
+        return this.$store.getters.bottomPage;
+      },
     },
     created() {
 
       window.addEventListener('scroll', () => {
 
-        if (this.getIsLazyQuery()) {console.log(1)
+        if (this.getIsLazyQuery()) {
           this.isLazyQuery = true;
-          this.limit += 100;
-          this.isBottomPage = true;
           this.$store.dispatch('getOriginal', {
-            limit: this.limit
+            limit: this.getLimit,
           });
           this.isLazyQuery = false;
         }
@@ -144,8 +147,9 @@
 <style lang="sass" scoped>
   .api-original
     position: relative
-  .progress-circular
-    position: fixed
-    bottom: 50vh
-    z-index: 1000
+    .progress-circular
+      position: fixed
+      bottom: 50vh
+      left: 50vw
+      z-index: 1000
 </style>

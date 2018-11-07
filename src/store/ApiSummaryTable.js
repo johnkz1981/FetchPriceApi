@@ -7,6 +7,8 @@ export default {
     dataRow: {},
     querySummaryTable: null,
     originalLoadingTable: false,
+    limit: 0,
+    bottomPage: false
   },
   mutations: {
     setManufacturer(state, payload) {
@@ -30,6 +32,12 @@ export default {
     setOriginalLoadingTable(state, payload) {
       state.originalLoadingTable = payload;
     },
+    setLimit(state, payload) {
+      state.limit = payload;
+    },
+    setBottomPage(state, payload) {
+      state.bottomPage = payload;
+    },
   },
   actions: {
     async getPriceGroup({dispatch, commit, state}, payload) {
@@ -37,6 +45,8 @@ export default {
       payload.makeLogo = payload.dataRow.makeLogo;
       payload.brandAndCode = payload.dataRow.brandAndCode;
 
+      commit('setBottomPage', false);
+      commit('setLimit', 30);
       commit('setApiPriceGroup', []);
       commit('setApiSummaryLoading', true);
       commit('setDataRow', payload.dataRow);
@@ -63,8 +73,12 @@ export default {
       ).catch(error => console.log(error));
     },
     getOriginal({dispatch, commit, state}, payload) {
-      state.querySummaryTable.limit = payload.limit;
+      commit('setBottomPage', true);
+      let limit = payload.limit;
+      limit += 100;
+      state.querySummaryTable.limit = limit;
       commit('setOriginalLoadingTable', true);
+      commit('setLimit', limit);
       dispatch('setParam', state.querySummaryTable).then(result => {
             commit('setDataOriginal', result.data);
             commit('setOriginalLoadingTable', false);
@@ -87,6 +101,12 @@ export default {
     },
     dataOriginal: state => {
       return state.dataOriginal;
+    },
+    limit: state => {
+      return state.limit;
+    },
+    bottomPage: state => {
+      return state.bottomPage;
     },
   }
 }
