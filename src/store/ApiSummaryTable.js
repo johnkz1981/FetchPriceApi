@@ -3,12 +3,15 @@ export default {
     manufacturer: '',
     apiSummaryLoading: false,
     apiPriceGroup: [],
-    dataOriginal: [],
     dataRow: {},
     querySummaryTable: null,
     originalLoadingTable: false,
-    limit: 0,
-    bottomPage: false
+    bottomPage: false,
+    priceGroupObj: {},
+    hideDetail: true,
+    activeTab: 0,
+    currentRowCount: 0,
+    lazyLoad: false
   },
   mutations: {
     setManufacturer(state, payload) {
@@ -18,79 +21,142 @@ export default {
       state.apiSummaryLoading = payload;
     },
     setApiPriceGroup(state, payload) {
-      state.apiPriceGroup = payload;
+      for(const item of payload){
+        if(state.apiPriceGroup.some(elem => elem === item)){
+          continue;
+        }
+        state.apiPriceGroup.push(item);
+      }
+    },
+    setApiPriceGroupEmpty(state) {
+      state.apiPriceGroup = [];
     },
     setDataRow(state, payload) {
       state.dataRow = payload;
     },
-    setDataOriginal(state, payload) {
-      state.dataOriginal = payload;
-    },
     setQuerySummaryTable(state, payload) {
       state.querySummaryTable = payload;
-    },
-    setOriginalLoadingTable(state, payload) {
-      state.originalLoadingTable = payload;
-    },
-    setLimit(state, payload) {
-      state.limit = payload;
     },
     setBottomPage(state, payload) {
       state.bottomPage = payload;
     },
+    setPriceGroupObj(state, payload) {
+      Object.assign(state.priceGroupObj, payload);
+    },
+    setPriceGroupObjEmpty(state) {
+      state.priceGroupObj = {};
+    },
+    setHideDetail(state, payload) {
+      state.hideDetail = payload;
+    },
+    setActiveTab(state, payload) {
+      state.activeTab = payload;
+    },
+    setlazyRow(state, payload) {
+      const priceGroup = state.priceGroupObj[payload.priceGroup];
+      if (priceGroup.lazyRow === undefined) {
+        Object.assign(priceGroup, {lazyRow: {limit: 0, skipLimit: 0}})
+      }
+      const lazyRow = Object.assign(priceGroup.lazyRow, payload.lazyRow);
+      Object.assign(priceGroup, {lazyRow: lazyRow});
+    },
+    setPriceGroupObjLazy(state, payload) {
+      state.priceGroupObj[payload.priceGroup].item = state.priceGroupObj[payload.priceGroup].item.concat(payload.item);
+      state.currentRowCount = state.priceGroupObj[payload.priceGroup].item.length;
+    },
+    setLazyLoad(state, payload) {
+      state.lazyLoad = payload;
+    },
+    setCurrentRowCountZero(state) {
+      state.currentRowCount = 0;
+    }
   },
   actions: {
-    // TODO Сделать слияние ApiDetail + ApiOriginal
+
     async getPriceGroup({dispatch, commit, state}, payload) {
+
       payload.substLevel = 'OriginalOnly';
       payload.makeLogo = payload.dataRow.makeLogo;
       payload.brandAndCode = payload.dataRow.brandAndCode;
 
-      commit('setBottomPage', false);
-      commit('setLimit', 30);
-      commit('setApiPriceGroup', []);
+      // commit('setBottomPage', false);
+      commit('setCurrentRowCountZero');
+      commit('setPriceGroupObjEmpty');
+      commit('setApiPriceGroupEmpty');
       commit('setApiSummaryLoading', true);
       commit('setDataRow', payload.dataRow);
+      commit('setHideDetail', true);
+
       const objSummary = {
         brandAndCode: payload.dataRow.brandAndCode,
         makeLogo: payload.makeLogo,
         substLevel: payload.substLevel
       };
-      commit('setQuerySummaryTable', objSummary);
 
+      commit('setQuerySummaryTable', objSummary);
+      // TODO Устоновить limit по умолчанию в 20
       await dispatch('setParam', payload).then(result => {
-            commit('setDataOriginal', result.data);
+
+            commit('setPriceGroupObj', {Original: result.data});
+            commit('setlazyRow', {priceGroup: 'Original', lazyRow: {limit: 20, skipLimit: 0}});
+            commit('setApiPriceGroup', ['Original']);
+            commit('setHideDetail', false);
           }
       ).catch(error => console.log(error));
 
       payload.priceGroup = 'yes';
       payload.substLevel = 'All';
+
       delete payload.brandAndCode;
 
-      await dispatch('setParam', payload).then(result => {
-            commit('setApiPriceGroup', result.data.item);
+      dispatch('setParam', payload).then(result => {
+            console.log(state.apiPriceGroup, result.data.priceGroupTitle)
+            commit('setApiPriceGroup', [state.apiPriceGroup, result.data.priceGroupTitle].flat());
             commit('setApiSummaryLoading', false);
+            commit('setPriceGroupObj', result.data.priceGroupObj);
+            for (const item of state.apiPriceGroup) {
+              if (item === 'Original') {
+                continue;
+              }
+              commit('setlazyRow', {priceGroup: item, lazyRow: {limit: 20, skipLimit: 0}});
+            }
           }
       ).catch(error => console.log(error));
     },
-    getOriginal({dispatch, commit, state}, payload) {
-      commit('setBottomPage', true);
-      let limit = payload.limit;
-      limit += 100;
-      state.querySummaryTable.limit = limit;
-      commit('setOriginalLoadingTable', true);
-      commit('setLimit', limit);
-      dispatch('setParam', state.querySummaryTable).then(result => {
-            commit('setDataOriginal', result.data);
-            commit('setOriginalLoadingTable', false);
+    addGeneralTable({dispatch, commit, state}, payload) {
+      if (payload.priceGroup === 'Original') {
+        payload.substLevel = 'OriginalOnly';
+      } else {
+        payload.substLevel = 'All';
+      }
+      payload.makeLogo = state.querySummaryTable.makeLogo;
+      const lazyRow = state.priceGroupObj[payload.priceGroup].lazyRow;
+      const countRow = state.priceGroupObj[payload.priceGroup].total.countApi;
+      if (lazyRow.skipLimit + lazyRow.limit > countRow) {
+        return;
+      }
+      lazyRow.skipLimit = lazyRow.limit;
+      lazyRow.limit += 200;
+      commit('setlazyRow', {priceGroup: payload.priceGroup, lazyRow: lazyRow});
+
+      payload.limit = lazyRow.limit;
+      payload.skipLimit = lazyRow.skipLimit;
+      payload.lazy = 'yes';
+
+      commit('setLazyLoad', true);
+      dispatch('setParam', payload).then(result => {
+            const arrItem = [];
+            for (const key in result.data.item) {
+              arrItem.push(result.data.item[key]);
+            }
+            commit('setPriceGroupObjLazy', {item: arrItem, priceGroup: payload.priceGroup});
+            commit('setLazyLoad', false);
           }
       ).catch(error => console.log(error));
+      //console.log(payload)
     }
   },
   getters: {
-    originalLoadingTable: state => {
-      return state.originalLoadingTable;
-    },
     apiSummaryLoading: state => {
       return state.apiSummaryLoading;
     },
@@ -100,14 +166,26 @@ export default {
     dataRow: state => {
       return state.dataRow;
     },
-    dataOriginal: state => {
-      return state.dataOriginal;
-    },
     limit: state => {
       return state.limit;
     },
     bottomPage: state => {
       return state.bottomPage;
+    },
+    priceGroupObj: state => {
+      return state.priceGroupObj;
+    },
+    hideDetail: state => {
+      return state.hideDetail;
+    },
+    activeTab: state => {
+      return state.activeTab;
+    },
+    currentRowCount: state => {
+      return state.currentRowCount;
+    },
+    lazyLoad: state => {
+      return state.lazyLoad;
     },
   }
 }

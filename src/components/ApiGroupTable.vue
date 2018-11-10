@@ -11,17 +11,16 @@
       >
         <v-tab
                 v-for="item in getApiPriceGroup"
+                :key="item"
+                @click="next"
         >
           {{ enRuPriceGroup[item] }}
         </v-tab>
         <v-tab-item
                 v-for="item in getApiPriceGroup"
+                :key="item"
         >
-          <!--api-original-table
-                  v-if="item === 'Original'"
-          ></api-original-table-->
           <api-general-table
-
                   :priceGroup="item"
           ></api-general-table>
         </v-tab-item>
@@ -33,8 +32,6 @@
 <script>
   'use strict';
 
-  import ApiDetailTable from './ApiDetailTable'
-  import ApiOriginalTable from './ApiOriginalTable'
   import ApiGeneralTable from './ApiGeneralTable'
 
   export default {
@@ -53,28 +50,17 @@
     },
     name: "ApiGroupTable",
     components: {
-      // ApiDetailTable,
-      // ApiOriginalTable,
       ApiGeneralTable
     },
     methods: {
-      /*next() {
-        const active = parseInt(this.active);
-        this.active = (active < 2 ? active + 1 : 0);
-      }*/
+      next(){
+        setTimeout(() => this.$store.commit('setActiveTab', this.active),0);
+      }
     },
     computed: {
       getApiPriceGroup() {
-        const arrPriceGroup = ['Original'];
-
-        for (const item in this.$store.getters.apiPriceGroup) {
-          if (this.$store.getters.apiPriceGroup[item].PriceGroup === 'Original') {
-            continue;
-          }
-          arrPriceGroup.push(this.$store.getters.apiPriceGroup[item].PriceGroup)
-        }
         this.active = 0;
-        return arrPriceGroup;
+        return this.$store.getters.apiPriceGroup;
       },
     }
   }

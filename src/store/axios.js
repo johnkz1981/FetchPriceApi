@@ -22,7 +22,9 @@ export default {
         priceGroup: payload.priceGroup,
         priceGroupName: payload.priceGroupName,
         sortField: payload.sortField,
-        limit: payload.limit
+        limit: payload.limit,
+        skipLimit: payload.skipLimit,
+        lazy: payload.lazy
       };
 
       return axios({

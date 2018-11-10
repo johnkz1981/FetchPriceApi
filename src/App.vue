@@ -69,10 +69,7 @@
     },
     computed: {
       isDetail() {
-        if (this.$store.getters.dataOriginal === undefined || this.$store.getters.dataOriginal.length === 0) {
-          return false;
-        }
-        return true;
+        return !this.$store.getters.hideDetail;
       },
       isSummary() {
         if (this.$store.getters.dataApi !== undefined) {

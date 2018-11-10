@@ -14,7 +14,6 @@ export default {
 
       await dispatch('setParam', payload).then(result => {
             const data = {};
-
             data[payload.priceGroupName] = result.data;
             commit('setDataDetail', data);
           }
