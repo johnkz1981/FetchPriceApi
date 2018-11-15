@@ -1,23 +1,25 @@
 <template>
   <div class="api-original">
-    <v-progress-circular
+    <!--v-progress-circular
             v-show="lazyLoad"
             :size="50"
             color="primary"
             indeterminate
             class="progress-circular"
-    ></v-progress-circular>
+    ></v-progress-circular-->
     <v-data-table
             :headers="headers"
             :items="items"
             class="elevation-1"
-            :loading="loading"
+            :loading="lazyLoad"
             :pagination.sync="pagination"
+            :total-items="total.countApi"
+            rows-per-page-text=""
     >
-      <template slot="items" slot-scope="props" >
+      <template slot="items" slot-scope="props">
         <td class="">{{ props.item.manufacturer }}</td>
         <td class="">{{ props.item.vendorСode }}</td>
-        <td >{{ props.item.name }}</td>
+        <td>{{ props.item.name }}</td>
         <td class="">{{ props.item.quantity }}</td>
         <td class="">{{ props.item.price }}</td>
         <!--td class="">{{ props.item.DDPercent }}</td-->
@@ -79,24 +81,24 @@
         getDataDetail: [],
         dataDetailTotal: {},
         pagination: {
-            // rowsPerPage: -1,
-          //totalItems: this.total.countApi
         },
         loading: false,
       }
     },
     watch: {
-      pagination() {
-        // this.getDataFromApi()
-        this.pagination.totalItems = 60;
-        console.log(this.pagination)
+      pagination: {
+        handler() {
+          if(!this.apiSummaryLoading && this.apiPriceGroup[this.activeTab] === this.priceGroup){
+            this.getDataFromApi();
+          }
+        }
       },
       currentRowCount() {
         return this.$store.getters.priceGroupObj[this.priceGroup].item;
       },
     },
     methods: {
-      async getDataFromApi() {
+      /*async getDataFromApi() {
         this.loading = true;
         if (this.pagination) {
           await this.$store.dispatch('getDataDetail', {
@@ -108,6 +110,14 @@
         this.getDataDetail = data.item;
         this.dataDetailTotal = data.total;
         this.loading = false;
+      },*/
+      async getDataFromApi() {
+
+        await this.$store.dispatch('addGeneralTable', {
+              priceGroupName: this.priceGroup,
+              pagination: this.pagination
+            }
+        )
       },
       getIsLazyQuery() {
         return document.documentElement.scrollHeight ===
@@ -118,7 +128,7 @@
     },
     computed: {
       items() {
-        // this.$store.getters.currentRowCount;
+        this.$store.getters.lazyLoad;
         return this.$store.getters.priceGroupObj[this.priceGroup].item;
       },
       total() {
@@ -132,6 +142,9 @@
       },
       lazyLoad() {
         return this.$store.getters.lazyLoad;
+      },
+      apiSummaryLoading() {
+        return this.$store.getters.apiSummaryLoading;
       },
       /*currentRowCount() {
         return this.$store.getters.currentRowCount;

@@ -21,8 +21,8 @@ export default {
       state.apiSummaryLoading = payload;
     },
     setApiPriceGroup(state, payload) {
-      for(const item of payload){
-        if(state.apiPriceGroup.some(elem => elem === item)){
+      for (const item of payload) {
+        if (state.apiPriceGroup.some(elem => elem === item)) {
           continue;
         }
         state.apiPriceGroup.push(item);
@@ -78,6 +78,8 @@ export default {
       payload.substLevel = 'OriginalOnly';
       payload.makeLogo = payload.dataRow.makeLogo;
       payload.brandAndCode = payload.dataRow.brandAndCode;
+      payload.limit = 5;
+      payload.skipLimit = 0;
 
       // commit('setBottomPage', false);
       commit('setCurrentRowCountZero');
@@ -94,11 +96,9 @@ export default {
       };
 
       commit('setQuerySummaryTable', objSummary);
-      // TODO Устоновить limit по умолчанию в 20
-      await dispatch('setParam', payload).then(result => {
 
+      await dispatch('setParam', payload).then(result => {
             commit('setPriceGroupObj', {Original: result.data});
-            commit('setlazyRow', {priceGroup: 'Original', lazyRow: {limit: 20, skipLimit: 0}});
             commit('setApiPriceGroup', ['Original']);
             commit('setHideDetail', false);
           }
@@ -110,27 +110,27 @@ export default {
       delete payload.brandAndCode;
 
       dispatch('setParam', payload).then(result => {
-            console.log(state.apiPriceGroup, result.data.priceGroupTitle)
-            commit('setApiPriceGroup', [state.apiPriceGroup, result.data.priceGroupTitle].flat());
+
+            const flatArr = [state.apiPriceGroup, result.data.priceGroupTitle].reduce((acc, val) => acc.concat(val), []);
+            commit('setApiPriceGroup', flatArr);
             commit('setApiSummaryLoading', false);
             commit('setPriceGroupObj', result.data.priceGroupObj);
             for (const item of state.apiPriceGroup) {
               if (item === 'Original') {
                 continue;
               }
-              commit('setlazyRow', {priceGroup: item, lazyRow: {limit: 20, skipLimit: 0}});
             }
           }
       ).catch(error => console.log(error));
     },
     addGeneralTable({dispatch, commit, state}, payload) {
-      if (payload.priceGroup === 'Original') {
+      if (payload.priceGroupName === 'Original') {
         payload.substLevel = 'OriginalOnly';
       } else {
         payload.substLevel = 'All';
       }
       payload.makeLogo = state.querySummaryTable.makeLogo;
-      const lazyRow = state.priceGroupObj[payload.priceGroup].lazyRow;
+      /*const lazyRow = state.priceGroupObj[payload.priceGroup].lazyRow;
       const countRow = state.priceGroupObj[payload.priceGroup].total.countApi;
       if (lazyRow.skipLimit + lazyRow.limit > countRow) {
         return;
@@ -141,10 +141,17 @@ export default {
 
       payload.limit = lazyRow.limit;
       payload.skipLimit = lazyRow.skipLimit;
+      payload.lazy = 'yes';*/
+
+      const {sortBy, descending, page, rowsPerPage} = payload.pagination;
+      //console.log('sortBy:', sortBy, 'descending:', descending, 'page:', page, 'rowsPerPage:', rowsPerPage);
+      payload.limit = rowsPerPage;
+      payload.skipLimit = (page - 1) * rowsPerPage;
       payload.lazy = 'yes';
+      payload.sortField = [sortBy, descending];
 
       commit('setLazyLoad', true);
-      dispatch('setParam', payload).then(result => {
+      /*dispatch('setParam', payload).then(result => {
             const arrItem = [];
             for (const key in result.data.item) {
               arrItem.push(result.data.item[key]);
@@ -152,8 +159,17 @@ export default {
             commit('setPriceGroupObjLazy', {item: arrItem, priceGroup: payload.priceGroup});
             commit('setLazyLoad', false);
           }
+      ).catch(error => console.log(error));*/
+      dispatch('setParam', payload).then(result => {
+            const arrItem = [];
+            for (const key in result.data.item) {
+              arrItem.push(result.data.item[key]);
+            }
+            commit('setPriceGroupObj', {[payload.priceGroupName]: {item: arrItem}});
+            //commit('setPriceGroupObj', result.data);
+            commit('setLazyLoad', false);
+          }
       ).catch(error => console.log(error));
-      //console.log(payload)
     }
   },
   getters: {
