@@ -5,15 +5,22 @@
       <v-spacer></v-spacer>
       <v-text-field
               append-icon="search"
-              label="Search"
+              label="Поиск"
+              :loading="getLoadingBitrix"
               single-line
               hide-details
               @keyup.enter="getData"
               v-model="searchCode"
       ></v-text-field>
     </v-card-title>
-    <v-toolbar-title class="mb-2 text-xs-center">В наличии</v-toolbar-title>
+    <v-toolbar-title
+            class="mb-2 text-xs-center"
+            v-show="getDataBitrix"
+    >
+      В наличии
+    </v-toolbar-title>
     <bitrix-table
+            v-show="getDataBitrix"
             class="mb-4"
     ></bitrix-table>
     <v-toolbar-title
@@ -32,6 +39,17 @@
     <api-group-table
             v-show="isDetail"
     ></api-group-table>
+    <v-snackbar
+            v-model="errorMessage"
+            :bottom="true"
+            :multi-line="true"
+            :timeout="1000000"
+            color="red darken-4"
+    >
+      Проблемы с сетью просим прощения за неудобства!!!
+      Попробуйте повторить чуть попозже.
+    </v-snackbar>
+    <ModalInfoDetail/>
   </v-app>
 </template>
 
@@ -41,6 +59,7 @@
   import BitrixTable from './components/BitrixTable'
   import ApiSummaryTable from './components/ApiSummaryTable'
   import ApiGroupTable from './components/ApiGroupTable'
+  import ModalInfoDetail from './components/ModalInfoDetail'
 
   export default {
     data() {
@@ -52,7 +71,8 @@
     components: {
       BitrixTable,
       ApiSummaryTable,
-      ApiGroupTable
+      ApiGroupTable,
+      ModalInfoDetail
     },
     methods: {
       /**
@@ -75,7 +95,19 @@
         if (this.$store.getters.dataApi !== undefined) {
           //console.log( this.$store.getters.dataApi.length);
         }
-      }
+      },
+      getLoadingBitrix() {
+        return this.$store.getters.bitrixLoading;
+      },
+      getDataBitrix() {
+        if (this.$store.getters.dataBitrix === undefined || this.$store.getters.dataBitrix.length === 0) {
+          return false;
+        }
+        return this.$store.getters.dataBitrix.item.length !== 0;
+      },
+      errorMessage() {
+        return this.$store.getters.errorMessage;
+      },
     }
   }
 </script>

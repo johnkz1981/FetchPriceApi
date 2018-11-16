@@ -5,6 +5,8 @@ import ApiSummaryTable from './ApiSummaryTable.js'
 import BitrixTable from './BitrixTable.js'
 import ApiDetailTable from './ApiDetailTable.js'
 import axios from './axios.js'
+import error from './error.js'
+import ModalInfoDetail from './ModalInfoDetail.js'
 
 Vue.use(Vuex);
 
@@ -15,5 +17,7 @@ export default new Vuex.Store({
     BitrixTable,
     ApiDetailTable,
     axios,
+    error,
+    ModalInfoDetail
   }
 })

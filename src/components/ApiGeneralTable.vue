@@ -17,6 +17,12 @@
             rows-per-page-text=""
     >
       <template slot="items" slot-scope="props">
+        <td
+                class="items__icon"
+                @click="openModalInfo(props.item)"
+        >
+          <v-icon>info</v-icon>
+        </td>
         <td class="">{{ props.item.manufacturer }}</td>
         <td class="">{{ props.item.vendorСode }}</td>
         <td>{{ props.item.name }}</td>
@@ -55,21 +61,25 @@
           {{ currentRowCount}}
         </td-->
       </template>
-
     </v-data-table>
   </div>
 </template>
 
 <script>
 
+  //import ModalInfoDetail from './ModalInfoDetail'
   export default {
     name: "ApiGeneralTable",
+    components: {
+      //ModalInfoDetail
+    },
     props: {
       priceGroup: String,
     },
     data() {
       return {
         headers: [
+          {text: 'Инфо', value: 'info', sortable: false},
           {text: 'Производитель', value: 'manufacturer'},
           {text: 'Артикул', value: 'vendorСode'},
           {text: 'Наименование', value: 'name'},
@@ -80,15 +90,14 @@
         ],
         getDataDetail: [],
         dataDetailTotal: {},
-        pagination: {
-        },
+        pagination: {},
         loading: false,
       }
     },
     watch: {
       pagination: {
         handler() {
-          if(!this.apiSummaryLoading && this.apiPriceGroup[this.activeTab] === this.priceGroup){
+          if (!this.apiSummaryLoading && this.apiPriceGroup[this.activeTab] === this.priceGroup) {
             this.getDataFromApi();
           }
         }
@@ -98,19 +107,13 @@
       },
     },
     methods: {
-      /*async getDataFromApi() {
-        this.loading = true;
-        if (this.pagination) {
-          await this.$store.dispatch('getDataDetail', {
-            priceGroupName: this.priceGroup,
-            sortField: [this.pagination.sortBy, this.pagination.descending],
-          });
-        }
-        const data = this.$store.getters.dataDetail[this.priceGroup];
-        this.getDataDetail = data.item;
-        this.dataDetailTotal = data.total;
-        this.loading = false;
-      },*/
+      openModalInfo(row) {
+        // TODO в setModalInfo добавить объект в store
+        this.$store.dispatch('setModalInfo', {
+          row: row,
+          openModal: true
+        })
+      },
       async getDataFromApi() {
 
         await this.$store.dispatch('addGeneralTable', {
@@ -146,28 +149,17 @@
       apiSummaryLoading() {
         return this.$store.getters.apiSummaryLoading;
       },
-      /*currentRowCount() {
-        return this.$store.getters.currentRowCount;
-      },*/
     },
     created() {
-      /*window.addEventListener('scroll', () => {
-
-        if (this.getIsLazyQuery()) {
-          this.$store.dispatch('addGeneralTable', {
-                priceGroup: this.priceGroup,
-              }
-          )
-        }
-      });*/
       if (this.priceGroup !== 'Original') {
         return;
       }
-      window.scrollTo({
-        'behavior': 'smooth',
-        'left': 0,
-        'top': document.getElementById('detail').offsetTop
-      });
+      const options = {
+        duration: 300,
+        offset: -70,
+        easing: 'easeInOutCubic'
+      };
+      this.$vuetify.goTo('#detail', options);
     }
   }
 </script>
@@ -178,4 +170,7 @@
     bottom: 50vh
     left: 50vw
     z-index: 1000
+
+    .items__icon
+      cursor: pointer
 </style>

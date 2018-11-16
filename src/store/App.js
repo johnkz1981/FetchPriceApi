@@ -30,7 +30,7 @@ export default {
             commit('setBitrixLoading', false);
             commit('setApiSummaryLoading', true);
           }
-      ).catch(error => console.log(error));
+      ).catch(error => commit('setErrorMessage', true));
 
       delete payload.bitrix;
       payload.group = 'yes';
