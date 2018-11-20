@@ -4,14 +4,14 @@ export default {
   state: {
     searchCode: '',
   },
-  mutations:{
+  mutations: {
     setSearchCode(state, payload) {
       state.searchCode = payload;
     },
   },
-  actions:{
+  actions: {
     setParam({state}, payload) {
-      const url = 'http://yugavtodetal.ru/api/get-api-query.php';
+      const url = payload.isTecdoc ? 'http://yugavtodetal.ru/api/get-tecdoc.php' : 'http://yugavtodetal.ru/api/get-api-query.php';
       const q = {
         searchCode: state.searchCode,
         bitrix: payload.bitrix,
@@ -24,14 +24,16 @@ export default {
         sortField: payload.sortField,
         limit: payload.limit,
         skipLimit: payload.skipLimit,
-        lazy: payload.lazy
+        lazy: payload.lazy,
+        vendorCode: payload.vendorСode,
+        manufacturer: payload.manufacturer,
       };
 
       return axios({
             method: "get",
             url: url,
             params: {
-              q: JSON.stringify(q)
+              q: JSON.stringify(q),
             }
           }
       )

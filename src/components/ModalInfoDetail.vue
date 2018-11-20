@@ -2,26 +2,19 @@
   <div class="text-xs-center">
     <v-dialog
             v-model="modalInfo"
-            width="500"
+            width="800"
     >
-      <v-btn
-              slot="activator"
-              color="red lighten-2"
-              dark
-      >
-        Click Me
-      </v-btn>
-
       <v-card>
         <v-card-title
                 class="headline grey lighten-2"
                 primary-title
         >
-          Privacy Policy
+          Артикул: {{modalRow.vendorСode}} Производитель: {{modalRow.manufacturer}}
         </v-card-title>
 
         <v-card-text>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          {{ objTecDoc }}
+
         </v-card-text>
 
         <v-divider></v-divider>
@@ -44,20 +37,38 @@
 <script>
   export default {
     name: "ModalInfoDetail",
-    data () {
-      return {
-      }
+    data() {
+      return {}
     },
     methods: {
-      closeModalInfo(){
-        this.$store.dispatch('setModalInfo', false)
+      closeModalInfo() {
+        this.$store.dispatch('setModalInfo', {openModal: false})
+      },
+      clickNotModal(event) {
+        if (!(event.target.className === 'items__icon' || event.target.parentElement.className === 'items__icon')) {
+          this.$store.dispatch('setModalInfo', {openModal: false})
+        }
       }
     },
     computed: {
       modalInfo() {
         return this.$store.getters.modalInfo;
       },
+      modalRow() {
+        return Object.assign({modalRow: {vendorСode: '', manufacturer: ''}}, this.$store.getters.modalRow);
+      },
+      objTecDoc() {
+        if(this.$store.getters.objTecDoc !== null && this.$store.getters.objTecDoc.isArticles){
+          return this.$store.getters.objTecDoc;
+        } else {
+          return 'Информация по данному артикулу не найдена!';
+        }
+      },
+    },
+    created() {
+      document.body.addEventListener('click', this.clickNotModal);
     }
+
   }
 </script>
 

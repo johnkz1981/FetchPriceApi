@@ -164,13 +164,13 @@
   }
 </script>
 
-<style scoped lang="sass">
+<style lang="sass">
   .progress-circular
     position: fixed
     bottom: 50vh
     left: 50vw
     z-index: 1000
 
-    .items__icon
-      cursor: pointer
+  .items__icon
+    cursor: pointer
 </style>
