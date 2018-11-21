@@ -21,14 +21,24 @@
                 class="items__icon"
                 @click="openModalInfo(props.item)"
         >
-          <v-icon>info</v-icon>
+          <v-icon
+                  v-if="isArticlesArr[props.item.brandAndCode] === true"
+                  color="success"
+          >info</v-icon>
+          <v-icon
+                  v-else-if="isArticlesArr[props.item.brandAndCode] === false"
+                  color="error"
+          >cancel</v-icon>
+          <v-icon
+                  v-else
+                  color="warning"
+          >clock-outline</v-icon>
         </td>
         <td class="">{{ props.item.manufacturer }}</td>
         <td class="">{{ props.item.vendorСode }}</td>
         <td>{{ props.item.name }}</td>
         <td class="">{{ props.item.quantity }}</td>
         <td class="">{{ props.item.price }}</td>
-        <!--td class="">{{ props.item.DDPercent }}</td-->
         <td>
           <v-progress-circular
                   class="mb-1 mt-1"
@@ -42,24 +52,17 @@
           </v-progress-circular>
         </td>
         <td class="">{{ props.item.LotQuantity }}</td>
+        <td class="">{{ props.item.deliveryTime }}</td>
       </template>
       <template slot="footer">
-        <td>
+        <td colspan="9">
           <strong>Количество:</strong>
-          {{ total.countApi }}
-        </td>
-        <td>
+          {{ total.countApi }}&#8195;
           <strong>Доставка:</strong>
-          {{ total.minDays}}
-        </td>
-        <td>
+          {{ total.minDays}}&#8195;
           <strong>Мнимальная цена поставщика:</strong>
           {{ total.minPriceContractor}}
         </td>
-        <!--td>
-          <strong>Выводимое количество:</strong>
-          {{ currentRowCount}}
-        </td-->
       </template>
     </v-data-table>
   </div>
@@ -67,11 +70,9 @@
 
 <script>
 
-  //import ModalInfoDetail from './ModalInfoDetail'
   export default {
     name: "ApiGeneralTable",
     components: {
-      //ModalInfoDetail
     },
     props: {
       priceGroup: String,
@@ -87,6 +88,7 @@
           {text: 'Цена', value: 'price'},
           {text: 'Вероятность', value: 'DDPercent'},
           {text: 'Кратность', value: 'LotQuantity'},
+          {text: 'Доставка', value: 'deliveryTime'},
         ],
         getDataDetail: [],
         dataDetailTotal: {},
@@ -108,7 +110,6 @@
     },
     methods: {
       openModalInfo(row) {
-        // TODO в setModalInfo добавить объект в store
         this.$store.dispatch('setModalInfo', {
           row: row,
           openModal: true
@@ -127,15 +128,43 @@
             document.documentElement.scrollTop +
             document.documentElement.clientHeight &&
             this.apiPriceGroup[this.activeTab] === this.priceGroup;
+      },
+      isArticles(val) {
+
+        if (this.apiPriceGroup[this.activeTab] !== this.priceGroup || this.$store.getters.lazyLoad) {
+          return;
+        }
+        let isArr = -1;
+        const brandAndCodeArr = [];
+
+        for (const row of val) {
+          isArr = brandAndCodeArr.findIndex(elem => {
+            return elem === row.brandAndCode;
+          });
+
+          if (isArr === -1) {
+            brandAndCodeArr.push(row.brandAndCode);
+
+            this.$store.dispatch('setIsArticlesArr', {
+              isArticles: true,
+              vendorСode: row.vendorСode,
+              manufacturer: row.manufacturer,
+              brandAndCode: row.brandAndCode,
+              isTecdoc: true
+            });
+          }
+        }
       }
     },
     computed: {
       items() {
-        this.$store.getters.lazyLoad;
+        this.$store.getters.lazyLoad
+        this.isArticles(this.$store.getters.priceGroupObj[this.priceGroup].item);
         return this.$store.getters.priceGroupObj[this.priceGroup].item;
       },
       total() {
-        return this.$store.getters.priceGroupObj[this.priceGroup].total;
+        return Object.assign({countApi: '',minDays: '', minPriceContractor: ''},
+            this.$store.getters.priceGroupObj[this.priceGroup].total);
       },
       activeTab() {
         return this.$store.getters.activeTab;
@@ -148,6 +177,14 @@
       },
       apiSummaryLoading() {
         return this.$store.getters.apiSummaryLoading;
+      },
+      isArticlesArr() {
+        let obj = {};
+
+        for (const item of this.$store.getters.isArticlesArr) {
+          obj = Object.assign(obj, {[item.brandAndCode]: item.isArticles})
+        }
+        return obj;
       },
     },
     created() {

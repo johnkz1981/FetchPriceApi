@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import App from './App.js'
-import ApiSummaryTable from './ApiSummaryTable.js'
-import BitrixTable from './BitrixTable.js'
-import ApiDetailTable from './ApiDetailTable.js'
-import axios from './axios.js'
-import error from './error.js'
-import ModalInfoDetail from './ModalInfoDetail.js'
+import App from './App'
+import ApiSummaryTable from './ApiSummaryTable'
+import BitrixTable from './BitrixTable'
+import ApiDetailTable from './ApiDetailTable'
+import axios from './axios'
+import error from './error'
+import ModalInfoDetail from './ModalInfoDetail'
 
 Vue.use(Vuex);
 

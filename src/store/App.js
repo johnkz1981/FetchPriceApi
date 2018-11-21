@@ -41,7 +41,7 @@ export default {
             commit('setData', data);
             commit('setApiSummaryLoading', false);
           }
-      ).catch(error => console.log(error));
+      ).catch(error => commit('setErrorMessage', true));
     },
   },
   getters: {

@@ -56,10 +56,10 @@
 <script>
   'use strict';
 
-  import BitrixTable from './components/BitrixTable'
-  import ApiSummaryTable from './components/ApiSummaryTable'
-  import ApiGroupTable from './components/ApiGroupTable'
-  import ModalInfoDetail from './components/ModalInfoDetail'
+  import BitrixTable from 'components/BitrixTable'
+  import ApiSummaryTable from 'components/ApiSummaryTable'
+  import ApiGroupTable from 'components/ApiGroupTable'
+  import ModalInfoDetail from 'components/ModalInfoDetail'
 
   export default {
     data() {

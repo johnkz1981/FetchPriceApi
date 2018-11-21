@@ -3,24 +3,28 @@
     <v-dialog
             v-model="modalInfo"
             width="800"
+            scrollable
     >
       <v-card>
         <v-card-title
                 class="headline grey lighten-2"
                 primary-title
         >
-          Артикул: {{modalRow.vendorСode}} Производитель: {{modalRow.manufacturer}}
+          Артикул: {{objTecDoc.vendorCode}} Производитель: {{modalRow.manufacturer}}
         </v-card-title>
-
-        <v-card-text>
-          {{ objTecDoc }}
+        <v-divider></v-divider>
+        <v-card-text style="height: 500px">
+          <li v-for="item in objTecDoc.img">
+            <label for="">{{item.Description}}</label>
+            <img :src="'http://yugavtodetal.ru/upload/tmp2/' + item.PictureName" :alt="item.PictureName">
+          </li>
 
         </v-card-text>
 
         <v-divider></v-divider>
 
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <!--v-spacer></v-spacer-->
           <v-btn
                   color="primary"
                   flat
@@ -58,7 +62,7 @@
         return Object.assign({modalRow: {vendorСode: '', manufacturer: ''}}, this.$store.getters.modalRow);
       },
       objTecDoc() {
-        if(this.$store.getters.objTecDoc !== null && this.$store.getters.objTecDoc.isArticles){
+        if (this.$store.getters.objTecDoc !== null && this.$store.getters.objTecDoc.isArticles) {
           return this.$store.getters.objTecDoc;
         } else {
           return 'Информация по данному артикулу не найдена!';

@@ -27,6 +27,7 @@ export default {
         lazy: payload.lazy,
         vendorCode: payload.vendorСode,
         manufacturer: payload.manufacturer,
+        isArticles: payload.isArticles,
       };
 
       return axios({
