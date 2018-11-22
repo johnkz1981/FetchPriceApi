@@ -1,7 +1,6 @@
 export default {
   state: {
     manufacturer: '',
-    apiSummaryLoading: false,
     apiPriceGroup: [],
     dataRow: {},
     querySummaryTable: null,
@@ -11,14 +10,10 @@ export default {
     hideDetail: true,
     activeTab: 0,
     currentRowCount: 0,
-    lazyLoad: false
   },
   mutations: {
     setManufacturer(state, payload) {
       state.manufacturer = payload.manufacturer
-    },
-    setApiSummaryLoading(state, payload) {
-      state.apiSummaryLoading = payload;
     },
     setApiPriceGroup(state, payload) {
       for (const item of payload) {
@@ -64,9 +59,6 @@ export default {
       state.priceGroupObj[payload.priceGroup].item = state.priceGroupObj[payload.priceGroup].item.concat(payload.item);
       state.currentRowCount = state.priceGroupObj[payload.priceGroup].item.length;
     },
-    setLazyLoad(state, payload) {
-      state.lazyLoad = payload;
-    },
     setCurrentRowCountZero(state) {
       state.currentRowCount = 0;
     }
@@ -78,10 +70,8 @@ export default {
       payload.substLevel = 'OriginalOnly';
       payload.makeLogo = payload.dataRow.makeLogo;
       payload.brandAndCode = payload.dataRow.brandAndCode;
-      payload.limit = 5;
-      payload.skipLimit = 0;
+      payload.limit = -1;
 
-      // commit('setBottomPage', false);
       commit('setCurrentRowCountZero');
       commit('setPriceGroupObjEmpty');
       commit('setApiPriceGroupEmpty');
@@ -104,6 +94,8 @@ export default {
           }
       ).catch(error => console.log(error));
 
+      payload.limit = 5;
+      payload.skipLimit = 0;
       payload.priceGroup = 'yes';
       payload.substLevel = 'All';
 
@@ -130,52 +122,27 @@ export default {
         payload.substLevel = 'All';
       }
       payload.makeLogo = state.querySummaryTable.makeLogo;
-      /*const lazyRow = state.priceGroupObj[payload.priceGroup].lazyRow;
-      const countRow = state.priceGroupObj[payload.priceGroup].total.countApi;
-      if (lazyRow.skipLimit + lazyRow.limit > countRow) {
-        return;
-      }
-      lazyRow.skipLimit = lazyRow.limit;
-      lazyRow.limit += 200;
-      commit('setlazyRow', {priceGroup: payload.priceGroup, lazyRow: lazyRow});
-
-      payload.limit = lazyRow.limit;
-      payload.skipLimit = lazyRow.skipLimit;
-      payload.lazy = 'yes';*/
 
       const {sortBy, descending, page, rowsPerPage} = payload.pagination;
-      //console.log('sortBy:', sortBy, 'descending:', descending, 'page:', page, 'rowsPerPage:', rowsPerPage);
+
       payload.limit = rowsPerPage;
       payload.skipLimit = (page - 1) * rowsPerPage;
       payload.lazy = 'yes';
       payload.sortField = [sortBy, descending];
 
-      commit('setLazyLoad', true);
-      /*dispatch('setParam', payload).then(result => {
-            const arrItem = [];
-            for (const key in result.data.item) {
-              arrItem.push(result.data.item[key]);
-            }
-            commit('setPriceGroupObjLazy', {item: arrItem, priceGroup: payload.priceGroup});
-            commit('setLazyLoad', false);
-          }
-      ).catch(error => console.log(error));*/
+      commit('setApiGeneralTableLoading', true);
       dispatch('setParam', payload).then(result => {
             const arrItem = [];
             for (const key in result.data.item) {
               arrItem.push(result.data.item[key]);
             }
             commit('setPriceGroupObj', {[payload.priceGroupName]: {item: arrItem}});
-            //commit('setPriceGroupObj', result.data);
-            commit('setLazyLoad', false);
+            commit('setApiGeneralTableLoading', false);
           }
       ).catch(error => console.log(error));
     }
   },
   getters: {
-    apiSummaryLoading: state => {
-      return state.apiSummaryLoading;
-    },
     apiPriceGroup: state => {
       return state.apiPriceGroup;
     },
@@ -199,9 +166,6 @@ export default {
     },
     currentRowCount: state => {
       return state.currentRowCount;
-    },
-    lazyLoad: state => {
-      return state.lazyLoad;
     },
   }
 }

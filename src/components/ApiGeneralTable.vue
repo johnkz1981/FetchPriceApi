@@ -1,38 +1,41 @@
 <template>
   <div class="api-original">
-    <!--v-progress-circular
-            v-show="lazyLoad"
+    <v-progress-circular
+            v-show="modalInfoLoading"
             :size="50"
             color="primary"
             indeterminate
             class="progress-circular"
-    ></v-progress-circular-->
+    ></v-progress-circular>
     <v-data-table
             :headers="headers"
             :items="items"
             class="elevation-1"
-            :loading="lazyLoad"
+            :loading="apiGeneralTableLoading"
             :pagination.sync="pagination"
-            :total-items="total.countApi"
+            :total-items="totalItems"
             rows-per-page-text=""
     >
       <template slot="items" slot-scope="props">
         <td
-                class="items__icon"
-                @click="openModalInfo(props.item)"
+                @click="openModalInfo(props.item, isArticlesArr[props.item.brandAndCode])"
+                :class="isArticlesArr[props.item.brandAndCode] ? 'items__icon_open' : 'items__icon_disable'"
         >
           <v-icon
                   v-if="isArticlesArr[props.item.brandAndCode] === true"
                   color="success"
-          >info</v-icon>
+          >info
+          </v-icon>
           <v-icon
                   v-else-if="isArticlesArr[props.item.brandAndCode] === false"
                   color="error"
-          >cancel</v-icon>
+          >cancel
+          </v-icon>
           <v-icon
                   v-else
                   color="warning"
-          >clock-outline</v-icon>
+          >clock-outline
+          </v-icon>
         </td>
         <td class="">{{ props.item.manufacturer }}</td>
         <td class="">{{ props.item.vendorСode }}</td>
@@ -72,8 +75,7 @@
 
   export default {
     name: "ApiGeneralTable",
-    components: {
-    },
+    components: {},
     props: {
       priceGroup: String,
     },
@@ -94,6 +96,7 @@
         dataDetailTotal: {},
         pagination: {},
         loading: false,
+        totalItems: 0
       }
     },
     watch: {
@@ -109,17 +112,23 @@
       },
     },
     methods: {
-      openModalInfo(row) {
+      openModalInfo(row, isArticles) {
+        if (isArticles === false) {
+          return;
+        }
         this.$store.dispatch('setModalInfo', {
           row: row,
           openModal: true
         })
       },
       async getDataFromApi() {
-
+        let {sortBy, descending, page, rowsPerPage} = this.pagination;
+        if (this.priceGroup === 'Original') {
+          return;
+        }
         await this.$store.dispatch('addGeneralTable', {
               priceGroupName: this.priceGroup,
-              pagination: this.pagination
+              pagination: {sortBy, descending, page, rowsPerPage}
             }
         )
       },
@@ -158,13 +167,16 @@
     },
     computed: {
       items() {
-        this.$store.getters.lazyLoad
+        this.$store.getters.apiGeneralTableLoading
         this.isArticles(this.$store.getters.priceGroupObj[this.priceGroup].item);
         return this.$store.getters.priceGroupObj[this.priceGroup].item;
       },
       total() {
-        return Object.assign({countApi: '',minDays: '', minPriceContractor: ''},
+
+        const total = Object.assign({countApi: '', minDays: '', minPriceContractor: ''},
             this.$store.getters.priceGroupObj[this.priceGroup].total);
+        this.totalItems = this.priceGroup === 'Original' ? 0 : total.countApi;
+        return total;
       },
       activeTab() {
         return this.$store.getters.activeTab;
@@ -172,11 +184,14 @@
       apiPriceGroup() {
         return this.$store.getters.apiPriceGroup;
       },
-      lazyLoad() {
-        return this.$store.getters.lazyLoad;
+      apiGeneralTableLoading() {
+        return this.$store.getters.apiGeneralTableLoading;
       },
       apiSummaryLoading() {
         return this.$store.getters.apiSummaryLoading;
+      },
+      modalInfoLoading() {
+        return this.$store.getters.modalInfoLoading;
       },
       isArticlesArr() {
         let obj = {};
@@ -201,13 +216,19 @@
   }
 </script>
 
-<style lang="sass">
-  .progress-circular
-    position: fixed
-    bottom: 50vh
-    left: 50vw
-    z-index: 1000
+<style lang="scss">
+  .items__icon_open {
+    cursor: pointer;
+  }
 
-  .items__icon
-    cursor: pointer
+  .items__icon_disable {
+    cursor: not-allowed;
+  }
+
+  .progress-circular {
+    position: fixed;
+    bottom: 50vh;
+    left: 50vw;
+    z-index: 1000;
+  }
 </style>

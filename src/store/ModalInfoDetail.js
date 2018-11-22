@@ -20,6 +20,8 @@ export default {
   actions: {
     async setModalInfo({dispatch, commit, state}, payload) {
       const row = Object.assign({vendorСode: '', manufacturer: '', isTecdoc: true}, payload.row);
+      commit('setModalInfoLoading', true);
+
       if (payload.openModal) {
         await dispatch('setParam', row).then(result => {
               commit('setObjTecDoc', result.data);
@@ -30,6 +32,7 @@ export default {
         commit('setObjTecDoc', null);
         commit('setModalInfo', payload);
       }
+      commit('setModalInfoLoading', false);
     },
     setIsArticlesArr({dispatch, commit, state}, payload) {
       let isArr = -1;
