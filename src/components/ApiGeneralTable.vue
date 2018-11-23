@@ -34,7 +34,7 @@
           <v-icon
                   v-else
                   color="warning"
-          >clock-outline
+          >cached
           </v-icon>
         </td>
         <td class="">{{ props.item.manufacturer }}</td>
@@ -173,7 +173,7 @@
       },
       total() {
 
-        const total = Object.assign({countApi: '', minDays: '', minPriceContractor: ''},
+        const total = Object.assign({countApi: 0, minDays: '', minPriceContractor: ''},
             this.$store.getters.priceGroupObj[this.priceGroup].total);
         this.totalItems = this.priceGroup === 'Original' ? 0 : total.countApi;
         return total;

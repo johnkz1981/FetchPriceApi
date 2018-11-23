@@ -30,7 +30,11 @@ export default {
             commit('setBitrixLoading', false);
             commit('setApiSummaryLoading', true);
           }
-      ).catch(error => commit('setErrorMessage', true));
+      ).catch(error => {
+        commit('setErrorMessage', true);
+        commit('setBitrixLoading', false);
+        commit('setApiSummaryLoading', true);
+      });
 
       delete payload.bitrix;
       payload.group = 'yes';
@@ -41,7 +45,10 @@ export default {
             commit('setData', data);
             commit('setApiSummaryLoading', false);
           }
-      ).catch(error => commit('setErrorMessage', true));
+      ).catch(error => {
+        commit('setErrorMessage', true);
+        commit('setApiSummaryLoading', false);
+      });
     },
   },
   getters: {

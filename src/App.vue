@@ -43,7 +43,7 @@
             v-model="errorMessage"
             :bottom="true"
             :multi-line="true"
-            :timeout="1000000"
+            :timeout="12000"
             color="red darken-4"
     >
       Проблемы с сетью просим прощения за неудобства!!!

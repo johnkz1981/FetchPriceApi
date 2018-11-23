@@ -5,8 +5,9 @@ export default {
     errorMessage: '',
   },
   mutations:{
-    setErrorMessage(state, payload) {
-      state.errorMessage = payload;
+    async setErrorMessage(state, payload) {
+      await setTimeout(() => state.errorMessage = true, 0);
+      await setTimeout(() => state.errorMessage = false, 6000);
     },
   },
   actions:{
