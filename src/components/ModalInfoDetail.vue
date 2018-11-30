@@ -7,7 +7,7 @@
 
     >
       <v-card
-              pa-3>
+              >
         <v-card-title
                 class="headline grey lighten-2"
                 primary-title
@@ -69,6 +69,7 @@
                           :items="rows"
                           class="elevation-1"
                           hide-actions
+                          no-data-text=""
                   >
                     <template slot="items" slot-scope="props">
                       <td>{{ props.item.constructioninterval }}</td>
@@ -124,13 +125,10 @@
     },
     computed: {
       modalInfo() {
-        if(!this.$store.getters.modalInfo){
-          console.log(this.$refs.tree.active)
-        }
         return this.$store.getters.modalInfo;
       },
       modalRow() {
-        return Object.assign({modalRow: {vendorСode: '', manufacturer: ''}}, this.$store.getters.modalRow);
+        return Object.assign({modalRow: {vendorCode: '', manufacturer: ''}}, this.$store.getters.modalRow);
       },
       objTecDoc() {
 

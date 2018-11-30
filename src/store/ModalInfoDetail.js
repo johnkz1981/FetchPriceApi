@@ -19,7 +19,7 @@ export default {
   },
   actions: {
     async setModalInfo({dispatch, commit, state}, payload) {
-      const row = Object.assign({vendorСode: '', manufacturer: '', isTecdoc: true}, payload.row);
+      const row = Object.assign({vendorCode: '', manufacturer: '', isTecdoc: true}, payload.row);
 
       if (payload.openModal) {
         commit('setModalInfoLoading', true);
@@ -37,7 +37,7 @@ export default {
       }
 
     },
-    setIsArticlesArr({dispatch, commit, state}, payload) {
+    async setIsArticlesArr({dispatch, commit, state}, payload) {
       let isArr = -1;
 
       isArr = state.isArticlesArr.findIndex((elem) => {
@@ -46,7 +46,7 @@ export default {
       if (isArr !== -1) {
         return;
       }
-      dispatch('setParam', payload).then(result => {
+      await dispatch('setParam', payload).then(result => {
 
             commit('setIsArticlesArr', Object.assign(payload, result.data));
           }

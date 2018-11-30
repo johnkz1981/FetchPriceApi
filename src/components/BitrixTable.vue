@@ -23,7 +23,7 @@
     </template>
     <template slot="items" slot-scope="props">
       <td class="text-xs-right">{{ props.item.manufacturer }}</td>
-      <td class="text-xs-right">{{ props.item.vendorСode }}</td>
+      <td class="text-xs-right">{{ props.item.vendorCode }}</td>
       <td>{{ props.item.name }}</td>
       <td class="text-xs-right">{{ props.item.quantity }}</td>
       <td class="text-xs-right">{{ props.item.price }}</td>
@@ -62,7 +62,7 @@
         },
         headers: [
           {text: 'Производитель', value: 'manufacturer'},
-          {text: 'Артикул', value: 'vendorСode'},
+          {text: 'Артикул', value: 'vendorCode'},
           {text: 'Наименование', value: 'name'},
           {text: 'Количество', value: 'quantity'},
           {text: 'Цена', value: 'price'},

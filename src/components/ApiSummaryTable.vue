@@ -6,6 +6,7 @@
           class="elevation-1"
           :loading="getApiSummaryLoading"
           :pagination.sync="pagination"
+          no-data-text=""
   >
     <v-progress-linear slot="progress" indeterminate></v-progress-linear>
     <template slot="headers" slot-scope="props">
@@ -28,7 +29,7 @@
               :data-make-logo="props.item.MakeLogo"
               @click="rowClickSummaryTable">
         <td class="">{{ props.item.manufacturer }}</td>
-        <td class="">{{ props.item.vendorСode }}</td>
+        <td class="">{{ props.item.vendorCode }}</td>
         <td>{{ props.item.name }}</td>
         <td class="">{{ props.item.price }}</td>
         <td class="">{{ props.item.priceOriginal }}</td>
@@ -62,7 +63,7 @@
       return {
         headers: [
           {text: 'Производитель', value: 'manufacturer'},
-          {text: 'Артикул', value: 'vendorСode'},
+          {text: 'Артикул', value: 'vendorCode'},
           {text: 'Наименование', value: 'name'},
           {text: 'Минимальная цена', value: 'price'},
           {text: 'Исходная цена', value: 'priceOriginal'},

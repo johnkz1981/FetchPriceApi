@@ -15,6 +15,8 @@
             :pagination.sync="pagination"
             :total-items="totalItems"
             rows-per-page-text=""
+            :rows-per-page-items="[ 5, 10, 25 ]"
+            no-data-text=""
     >
       <template slot="items" slot-scope="props">
         <td
@@ -38,7 +40,7 @@
           </v-icon>
         </td>
         <td class="">{{ props.item.manufacturer }}</td>
-        <td class="">{{ props.item.vendorСode }}</td>
+        <td class="">{{ props.item.vendorCode }}</td>
         <td>{{ props.item.name }}</td>
         <td class="">{{ props.item.quantity }}</td>
         <td class="">{{ props.item.price }}</td>
@@ -56,9 +58,26 @@
         </td>
         <td class="">{{ props.item.LotQuantity }}</td>
         <td class="">{{ props.item.deliveryTime }}</td>
+        <td class=""
+        >
+          <div class="shopping-cart">
+            <input
+                    type="number"
+                    :value="props.item.LotQuantity || 1"
+                    :min="props.item.LotQuantity || 1"
+                    :max="props.item.quantity"
+                    class="shopping-cart__input"
+            >
+            <v-icon
+                    color="success"
+                    @click="addShoppingCart(props.item)"
+            >add_shopping_cart
+            </v-icon>
+          </div>
+        </td>
       </template>
       <template slot="footer">
-        <td colspan="9">
+        <td colspan="10">
           <strong>Количество:</strong>
           {{ total.countApi }}&#8195;
           <strong>Доставка:</strong>
@@ -84,19 +103,20 @@
         headers: [
           {text: 'Инфо', value: 'info', sortable: false},
           {text: 'Производитель', value: 'manufacturer'},
-          {text: 'Артикул', value: 'vendorСode'},
+          {text: 'Артикул', value: 'vendorCode'},
           {text: 'Наименование', value: 'name'},
           {text: 'Количество', value: 'quantity'},
           {text: 'Цена', value: 'price'},
           {text: 'Вероятность', value: 'DDPercent'},
           {text: 'Кратность', value: 'LotQuantity'},
           {text: 'Доставка', value: 'deliveryTime'},
+          {text: 'Корзина', value: 'Basket'},
         ],
         getDataDetail: [],
         dataDetailTotal: {},
         pagination: {},
         loading: false,
-        totalItems: 0
+        totalItems: 0,
       }
     },
     watch: {
@@ -156,13 +176,16 @@
 
             this.$store.dispatch('setIsArticlesArr', {
               isArticles: true,
-              vendorСode: row.vendorСode,
+              vendorCode: row.vendorCode,
               manufacturer: row.manufacturer,
               brandAndCode: row.brandAndCode,
               isTecdoc: true
             });
           }
         }
+      },
+      addShoppingCart(row) {
+        console.log(row)
       }
     },
     computed: {
@@ -230,5 +253,13 @@
     bottom: 50vh;
     left: 50vw;
     z-index: 1000;
+  }
+
+  .shopping-cart {
+    display: flex;
+    &__input {
+      width: 40px;
+      margin-right: 10px;
+    }
   }
 </style>

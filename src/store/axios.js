@@ -25,7 +25,7 @@ export default {
         limit: payload.limit,
         skipLimit: payload.skipLimit,
         lazy: payload.lazy,
-        vendorCode: payload.vendorСode,
+        vendorCode: payload.vendorCode,
         manufacturer: payload.manufacturer,
         isArticles: payload.isArticles,
       };
