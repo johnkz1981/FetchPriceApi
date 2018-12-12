@@ -72,7 +72,7 @@
       BitrixTable,
       ApiSummaryTable,
       ApiGroupTable,
-      ModalInfoDetail
+      ModalInfoDetail,
     },
     methods: {
       /**
