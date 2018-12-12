@@ -7,6 +7,7 @@ import axios from './axios'
 import error from './error'
 import ModalInfoDetail from './ModalInfoDetail'
 import loading from './loading'
+import basket from './basket'
 
 Vue.use(Vuex);
 
@@ -18,6 +19,7 @@ export default new Vuex.Store({
     axios,
     error,
     ModalInfoDetail,
-    loading
+    loading,
+    basket
   }
 })

@@ -66,7 +66,7 @@
                     :value="props.item.LotQuantity || 1"
                     :min="props.item.LotQuantity || 1"
                     :max="props.item.quantity"
-                    class="shopping-cart__input"
+                    :class="`shopping-cart__input input${props.item.id}`"
             >
             <v-icon
                     color="success"
@@ -185,7 +185,9 @@
         }
       },
       addShoppingCart(row) {
-        console.log(row)
+        const input = document.querySelector(`.input${row.id}`);
+
+        this.$store.dispatch('getIdProductFromRedis', {id: row.id, count: input.value});
       }
     },
     computed: {
@@ -248,18 +250,18 @@
     cursor: not-allowed;
   }
 
-  .progress-circular {
+  .progress-circular.v-progress-circular {
     position: fixed;
     bottom: 50vh;
     left: 50vw;
     z-index: 1000;
   }
 
-  .shopping-cart {
+  div.shopping-cart {
     display: flex;
-    &__input {
-      width: 40px;
-      margin-right: 10px;
-    }
+  }
+  input.shopping-cart__input {
+    width: 40px;
+    margin-right: 10px;
   }
 </style>

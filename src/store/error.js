@@ -1,5 +1,3 @@
-//import error from "error";
-
 export default {
   state: {
     errorMessage: '',

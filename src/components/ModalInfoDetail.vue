@@ -7,7 +7,7 @@
 
     >
       <v-card
-              >
+      >
         <v-card-title
                 class="headline grey lighten-2"
                 primary-title
@@ -15,71 +15,71 @@
           Артикул: {{objTecDoc.vendorCode}} Производитель: {{modalRow.manufacturer}}
         </v-card-title>
 
-          <v-tabs
-                  color="cyan"
-                  dark
-                  slider-color="yellow"
+        <v-tabs
+                color="cyan"
+                dark
+                slider-color="yellow"
+        >
+          <v-tab
+                  :key="1"
+                  ripple
           >
-            <v-tab
-                    :key="1"
-                    ripple
-            >
-              Фото
-            </v-tab>
-            <v-tab
-                    :key="2"
-                    ripple
-            >
-              Совместимости
-            </v-tab>
-            <v-tab-item
-                    :key="1"
-            >
-              <v-card flat>
-                <v-carousel
-                        :cycle="false"
-                        :dark="true"
-                        :hide-controls="true"
-                        :vertical="false"
-                        ref="carousel"
+            Фото
+          </v-tab>
+          <v-tab
+                  :key="2"
+                  ripple
+          >
+            Совместимости
+          </v-tab>
+          <v-tab-item
+                  :key="1"
+          >
+            <v-card flat>
+              <v-carousel
+                      :cycle="false"
+                      :dark="true"
+                      :hide-controls="true"
+                      :vertical="false"
+                      ref="carousel"
+              >
+                <v-carousel-item
+                        v-for="item in objTecDoc.img"
+                        :key="item.PictureName"
+                        :src="'http://yugavtodetal.ru/upload/tmp2/' + item.PictureName"
+                        width="600"
                 >
-                  <v-carousel-item
-                          v-for="item in objTecDoc.img"
-                          :key="item.PictureName"
-                          :src="'http://yugavtodetal.ru/upload/tmp2/' + item.PictureName"
-                          width="600"
-                  >
-                  </v-carousel-item>
-                </v-carousel>
-              </v-card>
-            </v-tab-item>
-            <v-tab-item
-                    :key="2"
-            >
-              <v-card flat>
-                <v-layout justify-space-between>
-                  <v-treeview ref="tree"
-                          :items="objTecDoc.tree"
-                          activatable
-                          :active.sync="active"
-                          style="height: 500px; overflow: auto"
-                  ></v-treeview>
-                  <v-data-table
-                          :headers="headers"
-                          :items="rows"
-                          class="elevation-1"
-                          hide-actions
-                          no-data-text=""
-                  >
-                    <template slot="items" slot-scope="props">
-                      <td>{{ props.item.constructioninterval }}</td>
-                      <td class="text-xs-right">{{ props.item.description }}</td>
-                    </template>
-                  </v-data-table>
-                </v-layout>
-              </v-card>
-            </v-tab-item>
-          </v-tabs>
+                </v-carousel-item>
+              </v-carousel>
+            </v-card>
+          </v-tab-item>
+          <v-tab-item
+                  :key="2"
+          >
+            <v-card flat>
+              <v-layout justify-space-between>
+                <v-treeview ref="tree"
+                            :items="objTecDoc.tree"
+                            activatable
+                            :active.sync="active"
+                            style="height: 500px; overflow: auto"
+                ></v-treeview>
+                <v-data-table
+                        :headers="headers"
+                        :items="rows"
+                        class="elevation-1"
+                        hide-actions
+                        no-data-text=""
+                >
+                  <template slot="items" slot-scope="props">
+                    <td>{{ props.item.constructioninterval }}</td>
+                    <td class="text-xs-right">{{ props.item.description }}</td>
+                  </template>
+                </v-data-table>
+              </v-layout>
+            </v-card>
+          </v-tab-item>
+        </v-tabs>
 
         <v-divider></v-divider>
 
@@ -136,9 +136,6 @@
           const {img, ...obj} = this.$store.getters.objTecDoc;
           const {objTree: tree, modelArr: treeAll} = obj.vehicles;
 
-          if (img.length === 0) {
-            img.push({PictureName: '78_nophoto.jpg', Description: ''});
-          }
           if (this.$refs.carousel.internalLazyValue + 1 > img.length) {
             this.$refs.carousel.internalLazyValue = 0;
           }
@@ -163,7 +160,12 @@
   }
 </script>
 
-<style lang="sass">
-  .v-image__image--cover
+<style lang="scss">
+  div.v-image__image.v-image__image--cover {
     background-size: contain
+  }
+
+  .v-dialog {
+    padding: 10px
+  }
 </style>

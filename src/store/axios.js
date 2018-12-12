@@ -11,7 +11,13 @@ export default {
   },
   actions: {
     setParam({state}, payload) {
-      const url = payload.isTecdoc ? 'http://yugavtodetal.ru/api/get-tecdoc.php' : 'http://yugavtodetal.ru/api/get-api-query.php';
+      let host = '';
+
+      if (window.location.host === 'localhost:8080') {
+        host = 'http://ugautodetal.ru';
+      }
+
+      const url = payload.isTecdoc ? `${host}/api/get-tecdoc.php` : `${host}/api/get-api-query.php`;
       const q = {
         searchCode: state.searchCode,
         bitrix: payload.bitrix,
@@ -28,6 +34,9 @@ export default {
         vendorCode: payload.vendorCode,
         manufacturer: payload.manufacturer,
         isArticles: payload.isArticles,
+        id: payload.id,
+        basket: payload.basket,
+        count: payload.count,
       };
 
       return axios({

@@ -2,7 +2,7 @@
   <v-app>
     <v-card-title>
 
-      <v-spacer></v-spacer>
+      <!--v-spacer></v-spacer-->
       <v-text-field
               append-icon="search"
               label="Поиск"
@@ -111,3 +111,8 @@
     }
   }
 </script>
+<style>
+  div.application--wrap {
+    min-height: auto;
+  }
+</style>
