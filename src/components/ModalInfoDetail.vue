@@ -46,7 +46,7 @@
                 <v-carousel-item
                         v-for="item in objTecDoc.img"
                         :key="item.PictureName"
-                        :src="'http://yugavtodetal.ru/upload/tmp2/' + item.PictureName"
+                        :src="host + item.PictureName"
                         width="600"
                 >
                 </v-carousel-item>
@@ -110,7 +110,8 @@
           {text: 'Дата выпуска', value: 'constructioninterval'},
           {text: 'Описание', value: 'description'},
         ],
-        rows: []
+        rows: [],
+        host: `http://${window.location.host}/upload/tmp2/`
       }
     },
     methods: {

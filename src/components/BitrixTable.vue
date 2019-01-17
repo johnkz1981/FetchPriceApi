@@ -22,29 +22,18 @@
       </tr>
     </template>
     <template slot="items" slot-scope="props">
-      <IsArticles :item="props.item"></IsArticles>
+      <is-articles
+              :item="props.item"
+              ref="isArticles"
+      ></is-articles>
       <td class="text-xs-right">{{ props.item.manufacturer }}</td>
       <td class="text-xs-right">{{ props.item.vendorCode }}</td>
       <td>{{ props.item.name }}</td>
       <td class="text-xs-right">{{ props.item.quantity }}</td>
       <td class="text-xs-right">{{ props.item.price }}</td>
-      <td class=""
-      >
-        <div class="shopping-cart">
-          <input
-                  type="number"
-                  :value="props.item.LotQuantity || 1"
-                  :min="props.item.LotQuantity || 1"
-                  :max="props.item.quantity"
-                  :class="`shopping-cart__input input${props.item.id}`"
-          >
-          <v-icon
-                  color="success"
-                  @click="addShoppingCart(props.item)"
-          >add_shopping_cart
-          </v-icon>
-        </div>
-      </td>
+      <basket
+              :item="props.item"
+      ></basket>
     </template>
     <template slot="no-data">
       <v-alert :value="true" color="error" icon="warning">
@@ -64,11 +53,13 @@
 
 <script>
   import IsArticles from 'components/IsArticles'
+  import basket from 'components/Basket'
 
   export default {
     name: "BitrixTable",
     components: {
-      IsArticles
+      IsArticles,
+      basket
     },
     props: {
       //items: Array,
@@ -102,65 +93,29 @@
         }
         //this.pagination.rowsPerPage = -1;
       },
-      openModalInfo(row, isArticles) {
-        if (isArticles === false) {
-          return;
-        }
-        this.$store.dispatch('setModalInfo', {
-          row: row,
-          openModal: true
-        })
-      },
-    },
-    isArticles(val) {
-
-      if (this.apiPriceGroup[this.activeTab] !== this.priceGroup || this.$store.getters.lazyLoad) {
-        return;
-      }
-      let isArr = -1;
-      const brandAndCodeArr = [];
-
-      for (const row of val) {
-        isArr = brandAndCodeArr.findIndex(elem => {
-          return elem === row.brandAndCode;
-        });
-
-        if (isArr === -1) {
-          brandAndCodeArr.push(row.brandAndCode);
-
-          this.$store.dispatch('setIsArticlesArr', {
-            isArticles: true,
-            vendorCode: row.vendorCode,
-            manufacturer: row.manufacturer,
-            brandAndCode: row.brandAndCode,
-            isTecdoc: true
-          });
-        }
-      }
     },
     computed: {
       getLoadingBitrix() {
         return this.$store.getters.bitrixLoading;
       },
       getDataBitrix() {
-        if (this.$store.getters.dataBitrix === undefined) {
-          return undefined;
+        const items = this.$store.getters.dataBitrix;
+        
+        if (items) {
+          setTimeout(() => {
+
+            Object.keys(this.$refs).length && this.$refs.isArticles && this.$refs.isArticles.isArticles(items.item);
+          }, 0);
+          return items.item;
+        } else {
+          return [];
         }
-        return this.$store.getters.dataBitrix.item;
       },
       getDataBitrixTotal() {
         if (this.$store.getters.dataBitrix === undefined) {
           return {minPriceOur: '', countBitix: ''};
         }
         return Object.assign({minPriceOur: '', countBitix: ''}, this.$store.getters.dataBitrix.total);
-      },
-      isArticlesArr() {
-        let obj = {};
-
-        for (const item of this.$store.getters.isArticlesArr) {
-          obj = Object.assign(obj, {[item.brandAndCode]: item.isArticles})
-        }
-        return obj;
       },
     }
   }

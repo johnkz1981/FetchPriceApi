@@ -76,7 +76,7 @@
       }
     },
     methods: {
-      rowClickSummaryTable() {
+      rowClickSummaryTable(event) {
         const dataRow = event.target.parentElement.dataset;
 
         this.$store.dispatch('getPriceGroup', {

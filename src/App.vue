@@ -1,8 +1,6 @@
 <template>
   <v-app>
     <v-card-title>
-
-      <!--v-spacer></v-spacer-->
       <v-text-field
               append-icon="search"
               label="Поиск"
@@ -85,7 +83,11 @@
       },
     },
     created() {
-      const searchElement = document.querySelector('.v-input__append-inner');
+      const searchElement = document.getElementById('api-search').value;
+
+      this.$store.dispatch('getData', {
+        searchCode: searchElement,
+      })
     },
     computed: {
       isDetail() {

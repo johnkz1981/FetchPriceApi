@@ -13,6 +13,7 @@
                 v-for="item in getApiPriceGroup"
                 :key="item"
                 @click="next"
+                :class="item"
         >
           {{ enRuPriceGroup[item] }}
         </v-tab>
@@ -53,8 +54,8 @@
       ApiGeneralTable
     },
     methods: {
-      next(){
-        setTimeout(() => this.$store.commit('setActiveTab', this.active),0);
+      next() {
+        setTimeout(() => this.$store.commit('setActiveTab', this.active), 0);
       }
     },
     computed: {
@@ -66,5 +67,25 @@
   }
 </script>
 
-<style lang="sass">
+<style lang="scss">
+  %margin {
+    margin: 5px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .v-tabs__div.Original {
+    background: #607D8B;
+    @extend %margin;
+  }
+
+  .v-tabs__div.ReplacementNonOriginal {
+    background: #795548;
+    @extend %margin;
+  }
+
+  .v-tabs__div.ReplacementOriginal {
+    background: #4CAF50;
+    @extend %margin;
+  }
 </style>

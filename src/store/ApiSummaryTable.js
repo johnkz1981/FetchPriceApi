@@ -97,10 +97,11 @@ export default {
         commit('setApiSummaryLoading', false);
       });
 
-      payload.limit = 5;
+      payload.limit = 25;
       payload.skipLimit = 0;
       payload.priceGroup = 'yes';
       payload.substLevel = 'All';
+      payload.sortField = ['price', false];
 
       delete payload.brandAndCode;
 

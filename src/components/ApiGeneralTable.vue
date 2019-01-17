@@ -15,30 +15,14 @@
             :pagination.sync="pagination"
             :total-items="totalItems"
             rows-per-page-text=""
-            :rows-per-page-items="[ 5, 10, 25 ]"
+            :rows-per-page-items="[ 25, 5, 10 ]"
             no-data-text=""
     >
       <template slot="items" slot-scope="props">
-        <td
-                @click="openModalInfo(props.item, isArticlesArr[props.item.brandAndCode])"
-                :class="isArticlesArr[props.item.brandAndCode] ? 'items__icon_open' : 'items__icon_disable'"
-        >
-          <v-icon
-                  v-if="isArticlesArr[props.item.brandAndCode] === true"
-                  color="success"
-          >info
-          </v-icon>
-          <v-icon
-                  v-else-if="isArticlesArr[props.item.brandAndCode] === false"
-                  color="error"
-          >cancel
-          </v-icon>
-          <v-icon
-                  v-else
-                  color="warning"
-          >cached
-          </v-icon>
-        </td>
+        <is-articles
+                :item="props.item"
+                ref="isArticles"
+        ></is-articles>
         <td class="">{{ props.item.manufacturer }}</td>
         <td class="">{{ props.item.vendorCode }}</td>
         <td>{{ props.item.name }}</td>
@@ -58,23 +42,9 @@
         </td>
         <td class="">{{ props.item.LotQuantity }}</td>
         <td class="">{{ props.item.deliveryTime }}</td>
-        <td class=""
-        >
-          <div class="shopping-cart">
-            <input
-                    type="number"
-                    :value="props.item.LotQuantity || 1"
-                    :min="props.item.LotQuantity || 1"
-                    :max="props.item.quantity"
-                    :class="`shopping-cart__input input${props.item.id}`"
-            >
-            <v-icon
-                    color="success"
-                    @click="addShoppingCart(props.item)"
-            >add_shopping_cart
-            </v-icon>
-          </div>
-        </td>
+        <basket
+                :item="props.item"
+        ></basket>
       </template>
       <template slot="footer">
         <td colspan="10">
@@ -91,10 +61,15 @@
 </template>
 
 <script>
+  import isArticles from 'components/IsArticles';
+  import basket from 'components/Basket';
 
   export default {
     name: "ApiGeneralTable",
-    components: {},
+    components: {
+      isArticles,
+      basket
+    },
     props: {
       priceGroup: String,
     },
@@ -114,7 +89,9 @@
         ],
         getDataDetail: [],
         dataDetailTotal: {},
-        pagination: {},
+        pagination: {
+          sortBy: 'price'
+        },
         loading: false,
         totalItems: 0,
       }
@@ -132,15 +109,6 @@
       },
     },
     methods: {
-      openModalInfo(row, isArticles) {
-        if (isArticles === false) {
-          return;
-        }
-        this.$store.dispatch('setModalInfo', {
-          row: row,
-          openModal: true
-        })
-      },
       async getDataFromApi() {
         let {sortBy, descending, page, rowsPerPage} = this.pagination;
         if (this.priceGroup === 'Original') {
@@ -163,38 +131,18 @@
         if (this.apiPriceGroup[this.activeTab] !== this.priceGroup || this.$store.getters.lazyLoad) {
           return;
         }
-        let isArr = -1;
-        const brandAndCodeArr = [];
+        setTimeout(() => {
 
-        for (const row of val) {
-          isArr = brandAndCodeArr.findIndex(elem => {
-            return elem === row.brandAndCode;
-          });
-
-          if (isArr === -1) {
-            brandAndCodeArr.push(row.brandAndCode);
-
-            this.$store.dispatch('setIsArticlesArr', {
-              isArticles: true,
-              vendorCode: row.vendorCode,
-              manufacturer: row.manufacturer,
-              brandAndCode: row.brandAndCode,
-              isTecdoc: true
-            });
-          }
-        }
+          Object.keys(this.$refs).length && this.$refs.isArticles.isArticles(val);
+        }, 0);
       },
-      addShoppingCart(row) {
-        const input = document.querySelector(`.input${row.id}`);
-
-        this.$store.dispatch('getIdProductFromRedis', {id: row.id, count: input.value});
-      }
     },
     computed: {
       items() {
-        this.$store.getters.apiGeneralTableLoading
-        this.isArticles(this.$store.getters.priceGroupObj[this.priceGroup].item);
-        return this.$store.getters.priceGroupObj[this.priceGroup].item;
+        this.$store.getters.apiGeneralTableLoading;
+        const items = this.$store.getters.priceGroupObj[this.priceGroup].item;
+        this.isArticles(items);
+        return items;
       },
       total() {
 
@@ -218,14 +166,6 @@
       modalInfoLoading() {
         return this.$store.getters.modalInfoLoading;
       },
-      isArticlesArr() {
-        let obj = {};
-
-        for (const item of this.$store.getters.isArticlesArr) {
-          obj = Object.assign(obj, {[item.brandAndCode]: item.isArticles})
-        }
-        return obj;
-      },
     },
     created() {
       if (this.priceGroup !== 'Original') {
@@ -242,13 +182,6 @@
 </script>
 
 <style lang="scss">
-  .items__icon_open {
-    cursor: pointer;
-  }
-
-  .items__icon_disable {
-    cursor: not-allowed;
-  }
 
   .progress-circular.v-progress-circular {
     position: fixed;
@@ -257,11 +190,4 @@
     z-index: 1000;
   }
 
-  div.shopping-cart {
-    display: flex;
-  }
-  input.shopping-cart__input {
-    width: 40px;
-    margin-right: 10px;
-  }
 </style>

@@ -12,32 +12,34 @@ export default {
   actions: {
     setParam({state}, payload) {
       let host = '';
+      let url = '';
 
       if (window.location.host === 'localhost:8080') {
         host = 'http://ugautodetal.ru';
       }
 
-      const url = payload.isTecdoc ? `${host}/api/get-tecdoc.php` : `${host}/api/get-api-query.php`;
-      const q = {
-        searchCode: state.searchCode,
-        bitrix: payload.bitrix,
-        group: payload.group,
-        substLevel: payload.substLevel,
-        makeLogo: payload.makeLogo,
-        brandAndCode: payload.brandAndCode,
-        priceGroup: payload.priceGroup,
-        priceGroupName: payload.priceGroupName,
-        sortField: payload.sortField,
-        limit: payload.limit,
-        skipLimit: payload.skipLimit,
-        lazy: payload.lazy,
-        vendorCode: payload.vendorCode,
-        manufacturer: payload.manufacturer,
-        isArticles: payload.isArticles,
-        id: payload.id,
-        basket: payload.basket,
-        count: payload.count,
-      };
+      if (payload.isTecdoc) {
+        url = `${host}/api/get-tecdoc.php`;
+
+      } else if (payload.isBitrix) {
+
+        url = `${host}/catalog/ajax.php`;
+
+        return axios({
+              method: "get",
+              url: url,
+              params: {
+                action: 'ADD2BASKET',
+                PRODUCT_ID: payload.id,
+                QUANTITY: payload.count
+              }
+            }
+        )
+      } else {
+        url = `${host}/api/get-api-query.php`;
+      }
+
+      const q = {...state, ...payload};
 
       return axios({
             method: "get",
